@@ -1,0 +1,5 @@
+﻿  sample.cpp
+d:\aditya\documents\github\graphics-projects\3d-project\sample.cpp(1144): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+  Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\3D-Project\.\Debug\Sample.exe
+  Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

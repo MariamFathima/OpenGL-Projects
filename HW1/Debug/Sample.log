@@ -1,0 +1,5 @@
+﻿  sample.cpp
+d:\aditya\desktop\school\osu\ms\term 4\cs550\sample2017\sample.cpp(1144): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+  Sample.vcxproj -> D:\Aditya\Desktop\School\OSU\MS\Term 4\CS550\Sample2017\.\Debug\Sample.exe
+  Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

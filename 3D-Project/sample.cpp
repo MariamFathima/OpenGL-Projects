@@ -11,9 +11,13 @@
 #include "glew.h"
 #endif
 
+#define NUMSEGS 100
+#define RADIUS 1
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
+
 
 
 //	This is a sample OpenGL / GLUT program
@@ -393,7 +397,7 @@ Display( )
 
 	// draw the current object:
 
-	glCallList( BoxList );
+	/*glCallList( BoxList );
 
 	if( DepthFightingOn != 0 )
 	{
@@ -401,14 +405,75 @@ Display( )
 			glRotatef( 90.,   0., 1., 0. );
 			glCallList( BoxList );
 		glPopMatrix( );
+	}*/
+
+
+	glColor3f(0.9, 0.1, 0.15);
+	float dang = 2. * M_PI / (float)(NUMSEGS - 1);
+	float ang = 0.;
+	glBegin(GL_LINE_LOOP);
+
+	for (int i = 0; i < NUMSEGS/5; i++)
+	{
+		glVertex3f(RADIUS*cos(ang), RADIUS*sin(ang), i);
+		ang += dang;
 	}
+	glEnd();
+	
+	glColor3f(0.1, 0.1, 0.75);
+	glBegin(GL_TRIANGLES);
+	//i = rand() % (NUMSEGS / 5);
+	for (int i = 0; i < NUMSEGS / 5; i++)
+	{
+		glVertex3f(RADIUS*cos(ang), RADIUS*sin(ang), i);
+		ang += dang;
+	}
+	glEnd();
 
+	glColor3f(0.2, 0.6, 0.15);
+	glBegin(GL_QUADS);
+	//i = rand() % (NUMSEGS / 5);
+	for (int i = 0; i < NUMSEGS / 5; i++)
+	{
+		glVertex3f(RADIUS*cos(ang), RADIUS*sin(ang), i);
+		ang += dang;
+	}
+	glEnd();
 
+	glColor3f(0.4, 0.6, 0.3);
+	glBegin(GL_TRIANGLE_STRIP);
+	//i = rand() % (NUMSEGS / 5);
+	for (int i = 0; i < NUMSEGS / 5; i++)
+	{
+		glVertex3f(RADIUS*cos(ang), RADIUS*sin(ang), i);
+		ang += dang;
+	}
+	glEnd();
+
+	glColor3f(0.3, 0.15, 0.66);
+	glBegin(GL_TRIANGLE_FAN);
+	//i = rand() % (NUMSEGS / 5);
+	for (int i = 0; i < NUMSEGS / 5; i++)
+	{
+		glVertex3f(RADIUS*cos(ang), RADIUS*sin(ang), i);
+		ang += dang;
+	}
+	glEnd();
+
+	glColor3f(0.45, 0.12, 0.55);
+	glBegin(GL_POLYGON);
+	//i = rand() % (NUMSEGS / 5);
+	for (int i = 0; i < NUMSEGS / 5; i++)
+	{
+		glVertex3f(RADIUS*cos(ang), RADIUS*sin(ang), i);
+		ang += dang;
+	}
+	glEnd();
 	// draw some gratuitous text that just rotates on top of the scene:
 
-	glDisable( GL_DEPTH_TEST );
+	/*glDisable( GL_DEPTH_TEST );
 	glColor3f( 0., 1., 1. );
-	DoRasterString( 0., 1., 0., "Text That Moves" );
+	DoRasterString( 0., 1., 0., "Text That Moves" );*/
 
 
 	// draw some gratuitous text that is fixed on the screen:
@@ -421,14 +486,14 @@ Display( )
 	// the modelview matrix is reset to identity as we don't
 	// want to transform these coordinates
 
-	glDisable( GL_DEPTH_TEST );
+	/*glDisable( GL_DEPTH_TEST );
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity( );
 	gluOrtho2D( 0., 100.,     0., 100. );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity( );
 	glColor3f( 1., 1., 1. );
-	DoRasterString( 5., 5., 0., "Text That Doesn't" );
+	DoRasterString( 5., 5., 0., "Text That Doesn't" );*/
 
 
 	// swap the double-buffered framebuffers:

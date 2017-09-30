@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <vector>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -13,6 +14,7 @@
 
 #define NUMSEGS 100
 #define RADIUS 1
+#define NUMCUBES 5
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -407,6 +409,14 @@ Display( )
 		glPopMatrix( );
 	}*/
 
+	std::vector<std::vector<float>> rbgvec;
+
+	//Generate the list of colors for the appropriate number of cubes
+	for (int i = 0; i < NUMCUBES; i++)
+	{
+		float c = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		
+	}
 
 	
 	glTranslatef(0.0, 2.0, 0.0);
@@ -456,74 +466,80 @@ Display( )
 
 void drawCube(float r, float g, float b, float x, float y, float z)
 {
+
+	
+	//get placeholder floats for glVertex3f
 	float dx = x;
 	float dy = y;
 	float dz = z;
-	float c = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+	/*
+	NOTE TO SELF:
+		If the polygon is centered at the origin,
+		good way to know which planes are which is check the (x, y, z)
+		Xright == x >= 0; Xleft == x < 0
+		Ytop == y >= 0; Ybot == y < 0
+		Znear == z >= 0; Zfar == z <0
+	*/
+
+	//x-right
 	glBegin(GL_QUADS);
-	// top
-	glColor3f( r, g, b );
-	glNormal3f(0.5f, 0.5f, 0.5f);
-	glVertex3f(-dx, dy, dz);
-	glVertex3f(dx, dy, dz);
-	glVertex3f(dx, dy, -dz);
-	glVertex3f(-dx, dy, -dz);
-
-	glEnd();
-
-	glBegin(GL_QUADS);
-	// front
-	glColor3f(r, g, b);
-	glNormal3f(0.5f, 0.5f, 0.5f);
-	glVertex3f(dx, -dy, dz);
-	glVertex3f(dx, dy, dz);
-	glVertex3f(-dx, dy, dz);
-	glVertex3f(-dx, -dy, dz);
-
-	glEnd();
-
-	glBegin(GL_QUADS);
-	// right
 	glColor3f(r, g, b);
 	glNormal3f(0.5f, 0.5f, 0.5f);
 	glVertex3f(dx, dy, -dz);
 	glVertex3f(dx, dy, dz);
 	glVertex3f(dx, -dy, dz);
 	glVertex3f(dx, -dy, -dz);
-
 	glEnd();
 
+	//x-left
 	glBegin(GL_QUADS);
-	// left
 	glColor3f(r, g, b);
 	glNormal3f(0.5f, 0.5f, 0.5f);
 	glVertex3f(-dx, -dy, dz);
 	glVertex3f(-dx, dy, dz);
 	glVertex3f(-dx, dy, -dz);
 	glVertex3f(-dx, -dy, -dz);
-
 	glEnd();
 
+	//y-top
 	glBegin(GL_QUADS);
-	// bottom
+	glColor3f(r, g, b);
+	glNormal3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(-dx, dy, dz);
+	glVertex3f(dx, dy, dz);
+	glVertex3f(dx, dy, -dz);
+	glVertex3f(-dx, dy, -dz);
+	glEnd();
+
+	//y-bot
+	glBegin(GL_QUADS);
 	glColor3f(r, g, b);
 	glNormal3f(0.5f, 0.5f, 0.5f);
 	glVertex3f(dx, -dy, dz);
 	glVertex3f(-dx, -dy, dz);
 	glVertex3f(-dx, -dy, -dz);
 	glVertex3f(dx, -dy, -dz);
-
 	glEnd();
 
+	//z-near
 	glBegin(GL_QUADS);
-	// back
+	glColor3f(r, g, b);
+	glNormal3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(dx, -dy, dz);
+	glVertex3f(dx, dy, dz);
+	glVertex3f(-dx, dy, dz);
+	glVertex3f(-dx, -dy, dz);
+	glEnd();
+
+	//z-far
+	glBegin(GL_QUADS);
 	glColor3f(r, g, b);
 	glNormal3f(0.5f, 0.5f, 0.5f);
 	glVertex3f(dx, dy, -dz);
 	glVertex3f(dx, -dy, -dz);
 	glVertex3f(-dx, -dy, -dz);
 	glVertex3f(-dx, dy, -dz);
-
 	glEnd();
 
 }

@@ -215,7 +215,7 @@ void	MouseMotion( int, int );
 void	Reset( );
 void	Resize( int, int );
 void	Visibility( int );
-void	drawCube( float, float, float);
+void	drawCube( float, float, float, float, float, float);
 void	Axes( float );
 void	HsvRgb( float[3], float [3] );
 
@@ -409,10 +409,11 @@ Display( )
 
 
 	
-
-	drawCube(1.0, 0.2, 0.2);
+	glTranslatef(0.0, 2.0, 0.0);
+	drawCube(1.0, 0.2, 0.2, 1.0, 1.0, 1.0);
 	
-
+	glTranslatef(1.0, -2.0, 0);
+	drawCube(0.3, 0.2, 0.2, 0.8, 0.2, 0.2);
 
 
 	// draw some gratuitous text that just rotates on top of the scene:
@@ -453,66 +454,75 @@ Display( )
 	glFlush( );
 }
 
-void drawCube(float r, float g, float b)
+void drawCube(float r, float g, float b, float x, float y, float z)
 {
-	int c = rand() % 25;
+	float dx = x;
+	float dy = y;
+	float dz = z;
+	float c = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 	glBegin(GL_QUADS);
 	// top
 	glColor3f( r, g, b );
-	glVertex3f(-0.5f + c, 0.5f + c, 0.5f + c);
-	glVertex3f(0.5f + c, 0.5f + c, 0.5f + c);
-	glVertex3f(0.5f + c, 0.5f + c, -0.5f + c);
-	glVertex3f(-0.5f + c, 0.5f + c, -0.5f + c);
+	glNormal3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(-dx, dy, dz);
+	glVertex3f(dx, dy, dz);
+	glVertex3f(dx, dy, -dz);
+	glVertex3f(-dx, dy, -dz);
 
 	glEnd();
 
 	glBegin(GL_QUADS);
 	// front
 	glColor3f(r, g, b);
-	glVertex3f(0.5f + c, -0.5f + c, 0.5f + c);
-	glVertex3f(0.5f + c, 0.5f + c, 0.5f + c);
-	glVertex3f(-0.5f + c, 0.5f + c, 0.5f + c);
-	glVertex3f(-0.5f + c, -0.5f + c, 0.5f + c);
+	glNormal3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(dx, -dy, dz);
+	glVertex3f(dx, dy, dz);
+	glVertex3f(-dx, dy, dz);
+	glVertex3f(-dx, -dy, dz);
 
 	glEnd();
 
 	glBegin(GL_QUADS);
 	// right
 	glColor3f(r, g, b);
-	glVertex3f(0.5f + c, 0.5f + c, -0.5f + c);
-	glVertex3f(0.5f + c, 0.5f + c, 0.5f + c);
-	glVertex3f(0.5f + c, -0.5f + c, 0.5f + c);
-	glVertex3f(0.5f + c, -0.5f + c, -0.5f + c);
+	glNormal3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(dx, dy, -dz);
+	glVertex3f(dx, dy, dz);
+	glVertex3f(dx, -dy, dz);
+	glVertex3f(dx, -dy, -dz);
 
 	glEnd();
 
 	glBegin(GL_QUADS);
 	// left
 	glColor3f(r, g, b);
-	glVertex3f(-0.5f + c, -0.5f + c, 0.5f + c);
-	glVertex3f(-0.5f + c, 0.5f + c, 0.5f + c);
-	glVertex3f(-0.5f + c, 0.5f + c, -0.5f + c);
-	glVertex3f(-0.5f + c, -0.5f + c, -0.5f + c);
+	glNormal3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(-dx, -dy, dz);
+	glVertex3f(-dx, dy, dz);
+	glVertex3f(-dx, dy, -dz);
+	glVertex3f(-dx, -dy, -dz);
 
 	glEnd();
 
 	glBegin(GL_QUADS);
 	// bottom
 	glColor3f(r, g, b);
-	glVertex3f(0.5f + c, -0.5f + c, 0.5f + c);
-	glVertex3f(-0.5f + c, -0.5f + c, 0.5f + c);
-	glVertex3f(-0.5f + c, -0.5f + c, -0.5f + c);
-	glVertex3f(0.5f + c, -0.5f + c, -0.5f + c);
+	glNormal3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(dx, -dy, dz);
+	glVertex3f(-dx, -dy, dz);
+	glVertex3f(-dx, -dy, -dz);
+	glVertex3f(dx, -dy, -dz);
 
 	glEnd();
 
 	glBegin(GL_QUADS);
 	// back
 	glColor3f(r, g, b);
-	glVertex3f(0.5f + c, 0.5f + c, -0.5f + c);
-	glVertex3f(0.5f + c, -0.5f + c, -0.5f + c);
-	glVertex3f(-0.5f + c, -0.5f + c, -0.5f + c);
-	glVertex3f(-0.5f + c, 0.5f + c, -0.5f + c);
+	glNormal3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(dx, dy, -dz);
+	glVertex3f(dx, -dy, -dz);
+	glVertex3f(-dx, -dy, -dz);
+	glVertex3f(-dx, dy, -dz);
 
 	glEnd();
 

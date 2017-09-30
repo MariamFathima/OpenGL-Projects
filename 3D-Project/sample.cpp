@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 #include <ctype.h>
 #include <vector>
+#include <ctime>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -191,7 +193,7 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
-
+std::vector<std::vector<float>> rgbvec, xyzvec;	//vectors to hold things
 
 // function prototypes:
 
@@ -220,12 +222,16 @@ void	Visibility( int );
 void	drawCube( float, float, float, float, float, float);
 void	Axes( float );
 void	HsvRgb( float[3], float [3] );
+float	getRandFloat();
 
 // main program:
 
 int
 main( int argc, char *argv[ ] )
 {
+	//seed our rand to make things interesting
+	srand(time(NULL));
+
 	// turn on the glut package:
 	// (do this before checking argc and argv since it might
 	// pull some command line arguments out)
@@ -259,7 +265,6 @@ main( int argc, char *argv[ ] )
 
 	glutSetWindow( MainWindow );
 	glutMainLoop( );
-
 
 	// this is here to make the compiler happy:
 
@@ -409,21 +414,42 @@ Display( )
 		glPopMatrix( );
 	}*/
 
-	std::vector<std::vector<float>> rbgvec;
+	
+	if (xyzvec.size() < 1) {
+		//Generate the list of colors for the appropriate number of cubes
+		for (int i = 0; i < NUMCUBES; i++)
+		{
 
-	//Generate the list of colors for the appropriate number of cubes
-	for (int i = 0; i < NUMCUBES; i++)
-	{
-		float c = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		
+			float r = getRandFloat();
+			float g = getRandFloat();
+			float b = getRandFloat();
+
+			std::vector<float> tvec = { r, g, b };
+			rgbvec.push_back(tvec);
+			std::cout << "rgb " << i << " = " << r << ", " << g << ", " << b << std::endl;
+			float x = getRandFloat();
+			float y = getRandFloat();
+			float z = getRandFloat();
+
+			std::vector<float> xvec = { x, y, z };
+			xyzvec.push_back(xvec);
+
+		}
 	}
 
+	for (int i = 0; i < NUMCUBES; i++)
+	{
+		if(i % 2 == 0)
+			glTranslatef(0.0, 2.0, 0.0);
+		else
+			glTranslatef(1.0, -2.0, 0);
 	
-	glTranslatef(0.0, 2.0, 0.0);
-	drawCube(1.0, 0.2, 0.2, 1.0, 1.0, 1.0);
+
+		drawCube( rgbvec.at(i).at(0), rgbvec.at(i).at(1), rgbvec.at(i).at(2),
+					xyzvec.at(i).at(0), xyzvec.at(i).at(1), xyzvec.at(i).at(2)
+				);
+	}
 	
-	glTranslatef(1.0, -2.0, 0);
-	drawCube(0.3, 0.2, 0.2, 0.8, 0.2, 0.2);
 
 
 	// draw some gratuitous text that just rotates on top of the scene:
@@ -462,6 +488,13 @@ Display( )
 	// note: be sure to use glFlush( ) here, not glFinish( ) !
 
 	glFlush( );
+}
+
+float getRandFloat()
+{
+	float x = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	std::cout << x << std::endl;
+	return x;
 }
 
 void drawCube(float r, float g, float b, float x, float y, float z)

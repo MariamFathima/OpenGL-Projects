@@ -17,6 +17,8 @@
 #define NUMSEGS 100
 #define RADIUS 1
 #define NUMCUBES 5
+#define BLADE_RADIUS 1.0
+#define BLADE_WIDTH 0.4
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -194,7 +196,7 @@ int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 int		lookInside;
-std::vector<std::vector<float>> rgbvec, xyzvec;	//vectors to hold things
+GLuint	blades;
 
 #include "heli.550"
 
@@ -429,7 +431,11 @@ Display( )
 	}*/
 
 	glCallList(heli);
-	
+	glTranslatef(0.0, 2.5, 0.0);
+	glRotatef(90., 0. , 0., 0.);
+	glCallList(blades);
+	glCallList(blades);
+	glCallList(blades);
 	
 
 
@@ -843,7 +849,7 @@ InitLists( )
 		n[1] += .25;
 		if (n[1] > 1.)
 			n[1] = 1.;
-		glColor3f(0., n[1], 0.);
+		glColor3f(0.5, n[1], 0.7);
 
 		glVertex3f(p0->x, p0->y, p0->z);
 		glVertex3f(p1->x, p1->y, p1->z);
@@ -851,6 +857,28 @@ InitLists( )
 	}
 	glEnd();
 	glPopMatrix();
+	glEndList();
+
+
+
+	// draw the helicopter blade with radius BLADE_RADIUS and
+	//	width BLADE_WIDTH centered at (0.,0.,0.) in the XY plane
+	blades = glGenLists(1);
+	//glTranslatef(0., 2., 0.);
+
+	glNewList(blades, GL_COMPILE);
+		glPushMatrix();
+		glBegin(GL_TRIANGLES);
+		glColor3f(0.827, 0.827, 0.827);
+		glVertex2f(BLADE_RADIUS, BLADE_WIDTH / 2.);
+		glVertex2f(0., 0.);
+		glVertex2f(BLADE_RADIUS, -BLADE_WIDTH / 2.);
+
+		glVertex2f(-BLADE_RADIUS, -BLADE_WIDTH / 2.);
+		glVertex2f(0., 0.);
+		glVertex2f(-BLADE_RADIUS, BLADE_WIDTH / 2.);
+		glEnd();
+		glPopMatrix();
 	glEndList();
 
 	// create the axes:

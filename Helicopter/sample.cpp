@@ -193,6 +193,7 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
+int		lookInside;
 std::vector<std::vector<float>> rgbvec, xyzvec;	//vectors to hold things
 
 #include "heli.550"
@@ -209,6 +210,7 @@ void	DoDepthMenu( int );
 void	DoDebugMenu( int );
 void	DoMainMenu( int );
 void	DoProjectMenu( int );
+void	DoLookAtMenu(int);
 void	DoRasterString( float, float, float, char * );
 void	DoStrokeString( float, float, float, float, char * );
 float	ElapsedSeconds( );
@@ -359,20 +361,28 @@ Display( )
 
 	// set the eye position, look-at position, and up-vector:
 
-	gluLookAt( 0., 0., 3.,     0., 0., 0.,     0., 1., 0. );
+	if (lookInside == 0)
+	{
+		//outside view
+		gluLookAt(8., 0., 8., 0., 1., 0., 0., 1., 0.);
+		
+		// rotate the scene:
+
+		glRotatef((GLfloat)Yrot, 0., 1., 0.);
+		glRotatef((GLfloat)Xrot, 1., 0., 0.);
 
 
-	// rotate the scene:
+		// uniformly scale the scene:
 
-	glRotatef( (GLfloat)Yrot, 0., 1., 0. );
-	glRotatef( (GLfloat)Xrot, 1., 0., 0. );
-
-
-	// uniformly scale the scene:
-
-	if( Scale < MINSCALE )
-		Scale = MINSCALE;
-	glScalef( (GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale );
+		if (Scale < MINSCALE)
+			Scale = MINSCALE;
+		glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
+	}
+	else
+	{
+		//inside view
+		gluLookAt(0., 0., 0.,  0., 0., -3.,  0., 1., 0.);
+	}
 
 
 	// set the fog parameters:
@@ -642,6 +652,13 @@ ElapsedSeconds( )
 	return (float)ms / 1000.f;
 }
 
+void DoLookAtMenu( int id )
+{
+	lookInside = id;
+
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
+}
 
 // initialize the glui window:
 
@@ -656,6 +673,10 @@ InitMenus( )
 	{
 		glutAddMenuEntry( ColorNames[i], i );
 	}
+
+	int lookatmenu = glutCreateMenu( DoLookAtMenu);
+	glutAddMenuEntry("Outside", 0);
+	glutAddMenuEntry("Inside", 1);
 
 	int axesmenu = glutCreateMenu( DoAxesMenu );
 	glutAddMenuEntry( "Off",  0 );
@@ -691,7 +712,7 @@ InitMenus( )
 	glutAddMenuEntry( "Reset",         RESET );
 	glutAddSubMenu(   "Debug",         debugmenu);
 	glutAddMenuEntry( "Quit",          QUIT );
-
+	glutAddSubMenu("Look Inside", lookatmenu);
 // attach the pop-up menu to the right mouse button:
 
 	glutAttachMenu( GLUT_RIGHT_BUTTON );

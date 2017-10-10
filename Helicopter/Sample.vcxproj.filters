@@ -19,4 +19,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="heli.550" />
+  </ItemGroup>
 </Project>

@@ -195,6 +195,8 @@ int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 std::vector<std::vector<float>> rgbvec, xyzvec;	//vectors to hold things
 
+#include "heli.550"
+
 // function prototypes:
 
 void	Animate( );

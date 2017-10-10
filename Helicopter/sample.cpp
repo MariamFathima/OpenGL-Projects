@@ -830,7 +830,7 @@ InitLists( )
 	}
 	glEnd();
 	glPopMatrix();
-
+	glEndList();
 
 	// create the axes:
 

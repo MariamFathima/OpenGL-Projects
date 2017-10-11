@@ -429,16 +429,18 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
-
-	glCallList(heli);
-	glTranslatef(0.0, 2.5, 0.0);
-	glRotatef(90., 0. , 0., 0.);
-	glCallList(blades);
-	glCallList(blades);
-	glCallList(blades);
 	
+	glCallList(heli);
+	glPushMatrix();
+	glTranslatef(0.1, 2.75, -1.5);
+	glRotatef(90., 1., 0., 0.);
+	glScalef(5.0, 1.0, 1.0);
+	glCallList(blades);
+	glPopMatrix();
 
-
+	/*glPushMatrix();
+	glCallList(blades);
+	glPopMatrix();*/
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	/*glDisable( GL_DEPTH_TEST );
@@ -866,10 +868,9 @@ InitLists( )
 	blades = glGenLists(1);
 	//glTranslatef(0., 2., 0.);
 
-	glNewList(blades, GL_COMPILE);
-		glPushMatrix();
+	glNewList(blades, GL_COMPILE);	
 		glBegin(GL_TRIANGLES);
-		glColor3f(0.827, 0.827, 0.827);
+		glColor3f(1., 0., 0.);
 		glVertex2f(BLADE_RADIUS, BLADE_WIDTH / 2.);
 		glVertex2f(0., 0.);
 		glVertex2f(BLADE_RADIUS, -BLADE_WIDTH / 2.);
@@ -878,7 +879,6 @@ InitLists( )
 		glVertex2f(0., 0.);
 		glVertex2f(-BLADE_RADIUS, BLADE_WIDTH / 2.);
 		glEnd();
-		glPopMatrix();
 	glEndList();
 
 	// create the axes:

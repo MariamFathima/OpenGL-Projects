@@ -1,11 +1,11 @@
 ﻿  sample.cpp
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(241): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(852): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(872): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(434): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(851): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(871): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(873): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(875): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(877): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(879): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Helicopter\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

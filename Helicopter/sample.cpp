@@ -198,7 +198,8 @@ int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 int		lookInside;
 GLuint	blades;
-int		BladeAngle = 1;
+int		LargeBladeAngle = 45;
+int		SmallBladeAngle = 15;
 float	Time;
 
 #include "heli.550"
@@ -295,7 +296,8 @@ Animate( )
 {
 	// put animation stuff in here -- change some global variables
 	// for Display( ) to find:
-	BladeAngle += 45;
+	LargeBladeAngle += 45;
+	SmallBladeAngle += 15;
 	int ms = glutGet(GLUT_ELAPSED_TIME);	// milliseconds
 	ms %= MS_IN_THE_ANIMATION_CYCLE;
 	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;
@@ -389,7 +391,7 @@ Display( )
 	else
 	{
 		//inside view
-		gluLookAt(0., 0., 0.,  0., 0., -3.,  0., 1., 0.);
+		gluLookAt(0., 0., 0.,  0., 0., -10.,  0., 1., 0.);
 	}
 
 
@@ -439,14 +441,15 @@ Display( )
 	glCallList(heli);
 	glPushMatrix();
 	glTranslatef(0.1, 2.75, -1.6);
-	glRotatef(BladeAngle * Time, 0., 1., 0.);
+	glRotatef(LargeBladeAngle * Time, 0., 1., 0.);
 	glRotatef(90., 1., 0., 0.);
-	glScalef(6.0, 1.0, 2.);
+	glScalef(6.5, 1.0, 4.);
 	glCallList(blades);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.4, 2.5, 9.);
+	glRotatef(SmallBladeAngle * Time, 1., 0., 0.);
 	glRotatef(90., 0., 1., 0.);
 	glScalef(1.5, 1.0, 1.0);
 	glCallList(blades);

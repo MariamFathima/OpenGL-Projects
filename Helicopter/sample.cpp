@@ -19,6 +19,7 @@
 #define NUMCUBES 5
 #define BLADE_RADIUS 1.0
 #define BLADE_WIDTH 0.4
+#define MS_IN_THE_ANIMATION_CYCLE	10000
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -197,6 +198,8 @@ int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 int		lookInside;
 GLuint	blades;
+int		BladeAngle = 1;
+float	Time;
 
 #include "heli.550"
 
@@ -292,7 +295,10 @@ Animate( )
 {
 	// put animation stuff in here -- change some global variables
 	// for Display( ) to find:
-
+	BladeAngle += 45;
+	int ms = glutGet(GLUT_ELAPSED_TIME);	// milliseconds
+	ms %= MS_IN_THE_ANIMATION_CYCLE;
+	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;
 	// force a call to Display( ) next time it is convenient:
 
 	glutSetWindow( MainWindow );
@@ -432,15 +438,19 @@ Display( )
 	
 	glCallList(heli);
 	glPushMatrix();
-	glTranslatef(0.1, 2.75, -1.5);
+	glTranslatef(0.1, 2.75, -1.6);
+	glRotatef(BladeAngle * Time, 0., 1., 0.);
 	glRotatef(90., 1., 0., 0.);
-	glScalef(5.0, 1.0, 1.0);
+	glScalef(6.0, 1.0, 2.);
 	glCallList(blades);
 	glPopMatrix();
 
-	/*glPushMatrix();
+	glPushMatrix();
+	glTranslatef(0.4, 2.5, 9.);
+	glRotatef(90., 0., 1., 0.);
+	glScalef(1.5, 1.0, 1.0);
 	glCallList(blades);
-	glPopMatrix();*/
+	glPopMatrix();
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	/*glDisable( GL_DEPTH_TEST );
@@ -793,7 +803,7 @@ InitGraphics( )
 	glutTabletButtonFunc( NULL );
 	glutMenuStateFunc( NULL );
 	glutTimerFunc( -1, NULL, 0 );
-	glutIdleFunc( NULL );
+	glutIdleFunc( Animate );
 
 	// init glew (a window must be open to do this):
 
@@ -809,7 +819,6 @@ InitGraphics( )
 #endif
 
 }
-
 
 // initialize the display lists that will not change:
 // (a display list is a way to store opengl commands in

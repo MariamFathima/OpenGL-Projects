@@ -1,7 +1,6 @@
 ﻿  sample.cpp
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(245): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(443): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(451): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(866): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(886): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\aditya\documents\github\graphics-projects\helicopter\sample.cpp(888): warning C4305: 'argument': truncation from 'double' to 'GLfloat'

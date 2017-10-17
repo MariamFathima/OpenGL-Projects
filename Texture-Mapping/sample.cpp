@@ -16,10 +16,8 @@
 
 #define NUMSEGS 100
 #define RADIUS 1
-#define NUMCUBES 5
-#define BLADE_RADIUS 1.0
-#define BLADE_WIDTH 0.4
-#define MS_IN_THE_ANIMATION_CYCLE	10000
+#define SLICES 10
+#define STACKS 10
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -296,11 +294,7 @@ Animate( )
 {
 	// put animation stuff in here -- change some global variables
 	// for Display( ) to find:
-	LargeBladeAngle += 15;
-	SmallBladeAngle += 45;
-	int ms = glutGet(GLUT_ELAPSED_TIME);	// milliseconds
-	ms %= MS_IN_THE_ANIMATION_CYCLE;
-	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;
+	
 	// force a call to Display( ) next time it is convenient:
 
 	glutSetWindow( MainWindow );
@@ -438,22 +432,7 @@ Display( )
 		glPopMatrix( );
 	}*/
 	
-	glCallList(heli);
-	glPushMatrix();
-	glTranslatef(0., 2.9, -2.);
-	glRotatef(LargeBladeAngle * Time, 0., 1., 0.);
-	glRotatef(90., 1., 0., 0.);
-	glScalef(5, 1.0, 4.);
-	glCallList(blades);
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(0.5, 2.5, 9.);
-	glRotatef(SmallBladeAngle * Time, 1., 0., 0.);
-	glRotatef(90., 0., 1., 0.);
-	glScalef(1.5, 1.0, 1.0);
-	glCallList(blades);
-	glPopMatrix();
+	
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	/*glDisable( GL_DEPTH_TEST );
@@ -831,68 +810,7 @@ InitGraphics( )
 void
 InitLists( )
 {
-	heli = glGenLists(1);
-	glNewList(heli, GL_COMPILE);
-	int i;
-	struct point *p0, *p1, *p2;
-	struct tri *tp;
-	float p01[3], p02[3], n[3];
-
-	glPushMatrix();
-	glTranslatef(0., -1., 0.);
-	glRotatef(97., 0., 1., 0.);
-	glRotatef(-15., 0., 0., 1.);
-	glBegin(GL_TRIANGLES);
-	for (i = 0, tp = Helitris; i < Helintris; i++, tp++)
-	{
-		p0 = &Helipoints[tp->p0];
-		p1 = &Helipoints[tp->p1];
-		p2 = &Helipoints[tp->p2];
-
-		// fake "lighting" from above:
-
-		p01[0] = p1->x - p0->x;
-		p01[1] = p1->y - p0->y;
-		p01[2] = p1->z - p0->z;
-		p02[0] = p2->x - p0->x;
-		p02[1] = p2->y - p0->y;
-		p02[2] = p2->z - p0->z;
-		Cross(p01, p02, n);
-		Unit(n, n);
-		n[1] = fabs(n[1]);
-		n[1] += .25;
-		if (n[1] > 1.)
-			n[1] = 1.;
-		glColor3f(0.5, n[1], 0.7);
-
-		glVertex3f(p0->x, p0->y, p0->z);
-		glVertex3f(p1->x, p1->y, p1->z);
-		glVertex3f(p2->x, p2->y, p2->z);
-	}
-	glEnd();
-	glPopMatrix();
-	glEndList();
-
-
-
-	// draw the helicopter blade with radius BLADE_RADIUS and
-	//	width BLADE_WIDTH centered at (0.,0.,0.) in the XY plane
-	blades = glGenLists(1);
-	//glTranslatef(0., 2., 0.);
-
-	glNewList(blades, GL_COMPILE);	
-		glBegin(GL_TRIANGLES);
-		glColor3f(1., 0., 0.);
-		glVertex2f(BLADE_RADIUS, BLADE_WIDTH / 2.);
-		glVertex2f(0., 0.);
-		glVertex2f(BLADE_RADIUS, -BLADE_WIDTH / 2.);
-
-		glVertex2f(-BLADE_RADIUS, -BLADE_WIDTH / 2.);
-		glVertex2f(0., 0.);
-		glVertex2f(-BLADE_RADIUS, BLADE_WIDTH / 2.);
-		glEnd();
-	glEndList();
-
+	
 	// create the axes:
 
 	AxesList = glGenLists( 1 );
@@ -1274,4 +1192,166 @@ HsvRgb( float hsv[3], float rgb[3] )
 	rgb[0] = r;
 	rgb[1] = g;
 	rgb[2] = b;
+}
+
+/* SPHERE.CPP CODE STARTS HERE */
+
+bool	Distort;		// global -- true means to distort the texture
+
+struct point {
+	float x, y, z;		// coordinates
+	float nx, ny, nz;	// surface normal
+	float s, t;		// texture coords
+};
+
+int		NumLngs, NumLats;
+struct point *	Pts;
+
+struct point *
+	PtsPointer(int lat, int lng)
+{
+	if (lat < 0)	lat += (NumLats - 1);
+	if (lng < 0)	lng += (NumLngs - 1);
+	if (lat > NumLats - 1)	lat -= (NumLats - 1);
+	if (lng > NumLngs - 1)	lng -= (NumLngs - 1);
+	return &Pts[NumLngs*lat + lng];
+}
+
+
+
+void
+DrawPoint(struct point *p)
+{
+	glNormal3f(p->nx, p->ny, p->nz);
+	glTexCoord2f(p->s, p->t);
+	glVertex3f(p->x, p->y, p->z);
+}
+
+void
+MjbSphere(float radius, int slices, int stacks)
+{
+	struct point top, bot;		// top, bottom points
+	struct point *p;
+
+	// set the globals:
+
+	NumLngs = slices;
+	NumLats = stacks;
+
+	if (NumLngs < 3)
+		NumLngs = 3;
+
+	if (NumLats < 3)
+		NumLats = 3;
+
+
+	// allocate the point data structure:
+
+	Pts = new struct point[NumLngs * NumLats];
+
+
+	// fill the Pts structure:
+
+	for (int ilat = 0; ilat < NumLats; ilat++)
+	{
+		float lat = -M_PI / 2. + M_PI * (float)ilat / (float)(NumLats - 1);
+		float xz = cos(lat);
+		float y = sin(lat);
+		for (int ilng = 0; ilng < NumLngs; ilng++)
+		{
+			float lng = -M_PI + 2. * M_PI * (float)ilng / (float)(NumLngs - 1);
+			float x = xz * cos(lng);
+			float z = -xz * sin(lng);
+			p = PtsPointer(ilat, ilng);
+			p->x = radius * x;
+			p->y = radius * y;
+			p->z = radius * z;
+			p->nx = x;
+			p->ny = y;
+			p->nz = z;
+			if (Distort)
+			{
+				/*p->s = ? ? ? ? ?
+				p->t = ? ? ? ? ?*/
+			}
+			else
+			{
+				p->s = (lng + M_PI) / (2.*M_PI);
+				p->t = (lat + M_PI / 2.) / M_PI;
+			}
+		}
+	}
+
+	top.x = 0.;		top.y = radius;	top.z = 0.;
+	top.nx = 0.;		top.ny = 1.;		top.nz = 0.;
+	top.s = 0.;		top.t = 1.;
+
+	bot.x = 0.;		bot.y = -radius;	bot.z = 0.;
+	bot.nx = 0.;		bot.ny = -1.;		bot.nz = 0.;
+	bot.s = 0.;		bot.t = 0.;
+
+
+	// connect the north pole to the latitude NumLats-2:
+
+	glBegin(GL_QUADS);
+	for (int ilng = 0; ilng < NumLngs - 1; ilng++)
+	{
+		p = PtsPointer(NumLats - 1, ilng);
+		DrawPoint(p);
+
+		p = PtsPointer(NumLats - 2, ilng);
+		DrawPoint(p);
+
+		p = PtsPointer(NumLats - 2, ilng + 1);
+		DrawPoint(p);
+
+		p = PtsPointer(NumLats - 1, ilng + 1);
+		DrawPoint(p);
+	}
+	glEnd();
+
+	// connect the south pole to the latitude 1:
+
+	glBegin(GL_QUADS);
+	for (int ilng = 0; ilng < NumLngs - 1; ilng++)
+	{
+		p = PtsPointer(0, ilng);
+		DrawPoint(p);
+
+		p = PtsPointer(0, ilng + 1);
+		DrawPoint(p);
+
+		p = PtsPointer(1, ilng + 1);
+		DrawPoint(p);
+
+		p = PtsPointer(1, ilng);
+		DrawPoint(p);
+	}
+	glEnd();
+
+
+	// connect the other 4-sided polygons:
+
+	glBegin(GL_QUADS);
+	for (int ilat = 2; ilat < NumLats - 1; ilat++)
+	{
+		for (int ilng = 0; ilng < NumLngs - 1; ilng++)
+		{
+			p = PtsPointer(ilat - 1, ilng);
+			DrawPoint(p);
+
+			p = PtsPointer(ilat - 1, ilng + 1);
+			DrawPoint(p);
+
+			p = PtsPointer(ilat, ilng + 1);
+			DrawPoint(p);
+
+			p = PtsPointer(ilat, ilng);
+			DrawPoint(p);
+		}
+	}
+	glEnd();
+
+	delete[] Pts;
+	Pts = NULL;
 }

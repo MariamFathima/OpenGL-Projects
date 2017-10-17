@@ -15,9 +15,9 @@
 #endif
 
 #define NUMSEGS 100
-#define RADIUS 1
-#define SLICES 10
-#define STACKS 10
+#define RADIUS 5.0
+#define SLICES 200
+#define STACKS 200
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -200,7 +200,6 @@ int		LargeBladeAngle = 15;
 int		SmallBladeAngle = 45;
 float	Time;
 
-#include "heli.550"
 
 // function prototypes:
 
@@ -234,6 +233,7 @@ float	getRandFloat();
 float	Dot(float [3], float [3]);
 void	Cross(float [3], float [3], float [3]);
 float	Unit(float[3], float[3]);
+void	MjbSphere(float, int, int);
 // main program:
 
 int
@@ -432,6 +432,7 @@ Display( )
 		glPopMatrix( );
 	}*/
 	
+	MjbSphere(RADIUS, SLICES, STACKS);
 	
 	// draw some gratuitous text that just rotates on top of the scene:
 

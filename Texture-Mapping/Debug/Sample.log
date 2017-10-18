@@ -1,9 +1,12 @@
 ﻿  sample.cpp
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(281): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1331): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1336): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1353): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1354): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(291): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(476): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1390): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1395): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1408): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1409): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1413): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1414): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Texture-Mapping\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

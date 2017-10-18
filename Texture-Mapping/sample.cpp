@@ -14,6 +14,7 @@
 #include "glew.h"
 #endif
 
+#define MS_PER_CYCLE 10
 #define NUMSEGS 100
 #define RADIUS 5.0
 #define SLICES 200
@@ -202,6 +203,14 @@ float	Time;
 GLuint	TexturedSphereList;
 GLuint	BlankSphereList;
 GLuint	tex0, tex1;
+bool	Distort;
+
+
+int level = 0;
+int ncomps = 3;
+int border = 0;
+
+
 // function prototypes:
 
 void	Animate( );
@@ -213,6 +222,7 @@ void	DoDepthFightingMenu( int );
 void	DoDepthMenu( int );
 void	DoDebugMenu( int );
 void	DoMainMenu( int );
+void	DoDistortMenu(bool);
 void	DoProjectMenu( int );
 void	DoTextureMenu(int);
 void	DoRasterString( float, float, float, char * );
@@ -332,7 +342,9 @@ Animate( )
 {
 	// put animation stuff in here -- change some global variables
 	// for Display( ) to find:
-	
+	int ms = glutGet(GLUT_ELAPSED_TIME);
+	ms %= MS_PER_CYCLE;
+	Time = (float)ms / (float)MS_PER_CYCLE;		// [0.,1.)
 	// force a call to Display( ) next time it is convenient:
 
 	glutSetWindow( MainWindow );
@@ -461,12 +473,48 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
-
+	glRotatef(360.*Time, 0., 1., 0.);
+	unsigned char* Tex = BmpToTexture("worldtex.bmp", &texWidth, &texHeight);
 	if (showTexture == 1) {
-		glCallList(TexturedSphereList);
+		Distort = false;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+
+		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
+
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+		glMatrixMode(GL_TEXTURE);
+		glTranslatef(0., 0., 0.);
+		glEnable(GL_TEXTURE_2D);
+		MjbSphere(RADIUS, SLICES, STACKS);
+		//glDisable(GL_TEXTURE_2D);
 	}
-	else {
-		glCallList(BlankSphereList);
+	else if(showTexture == 0) {
+		Distort = false;
+		MjbSphere(RADIUS, SLICES, STACKS);
+	}
+	else if (showTexture > 1) {
+		Distort = true;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+
+		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
+
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+		glMatrixMode(GL_TEXTURE);
+		glTranslatef(0., 0., 0.);
+		glEnable(GL_TEXTURE_2D);
+		MjbSphere(RADIUS, SLICES, STACKS);
 	}
 	
 	// draw some gratuitous text that just rotates on top of the scene:
@@ -690,8 +738,17 @@ ElapsedSeconds( )
 
 void DoTextureMenu( int id )
 {
+	std::cout << "Showtexture changed from " << showTexture;
 	showTexture = id;
-
+	std::cout << " to " << showTexture << std::endl;
+	/*std::cout << "Distort changed from " << Distort;
+	if (id > 1)	{
+		Distort = true;
+	}
+	else {
+		Distort = false;
+	}
+	std::cout << " to " << Distort << std::endl;*/
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
 }
@@ -710,9 +767,11 @@ InitMenus( )
 		glutAddMenuEntry( ColorNames[i], i );
 	}
 
+
 	int lookatmenu = glutCreateMenu( DoTextureMenu);
 	glutAddMenuEntry("Hide Texture", 0);
 	glutAddMenuEntry("Show Texture", 1);
+	glutAddMenuEntry("Distort", 2);
 
 	int axesmenu = glutCreateMenu( DoAxesMenu );
 	glutAddMenuEntry( "Off",  0 );
@@ -1270,7 +1329,7 @@ HsvRgb( float hsv[3], float rgb[3] )
 
 /* SPHERE.CPP CODE STARTS HERE */
 
-bool	Distort;		// global -- true means to distort the texture
+		// global -- true means to distort the texture
 
 struct point {
 	float x, y, z;		// coordinates
@@ -1345,8 +1404,9 @@ MjbSphere(float radius, int slices, int stacks)
 			p->nz = z;
 			if (Distort)
 			{
-				/*p->s = ? ? ? ? ?
-				p->t = ? ? ? ? ?*/
+
+				p->s = (lng * sin(Time * M_PI));
+				p->t = (lat * cos(Time * M_PI));
 			}
 			else
 			{

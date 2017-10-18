@@ -483,7 +483,7 @@ Display( )
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -506,7 +506,7 @@ Display( )
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -905,46 +905,7 @@ InitGraphics( )
 void
 InitLists( )
 {
-	
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	glGenTextures(1, &tex0);
-	glGenTextures(1, &tex1);
-	glBindTexture(GL_TEXTURE_2D, tex0);
-		unsigned char* Tex = BmpToTexture("worldtex.bmp", &texWidth, &texHeight);;
-		int level, ncomps, border;
-		level = 0;
-		ncomps = 3;
-		border = 0;
-
-
-		TexturedSphereList = glGenLists(1);
-		glNewList(TexturedSphereList, GL_COMPILE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		
-		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
-
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-		glMatrixMode(GL_TEXTURE);
-		glTranslatef(0., 0., 0.);
-		glEnable(GL_TEXTURE_2D);
-		MjbSphere(RADIUS, SLICES, STACKS);
-		glDisable(GL_TEXTURE_2D);
-		glEndList();
-
-		BlankSphereList = glGenLists(1);
-		glNewList(BlankSphereList, GL_COMPILE);
-		MjbSphere(RADIUS, SLICES, STACKS);
-		glEndList();
-
-
-	// create the axes:
+		// create the axes:
 
 	AxesList = glGenLists( 1 );
 	glNewList( AxesList, GL_COMPILE );

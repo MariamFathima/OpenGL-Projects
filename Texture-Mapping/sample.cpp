@@ -194,13 +194,14 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
-int		lookInside;
+int		showTexture;
 GLuint	blades;
 int		LargeBladeAngle = 15;
 int		SmallBladeAngle = 45;
 float	Time;
-
-
+GLuint	TexturedSphereList;
+GLuint	BlankSphereList;
+GLuint	tex0, tex1;
 // function prototypes:
 
 void	Animate( );
@@ -213,7 +214,7 @@ void	DoDepthMenu( int );
 void	DoDebugMenu( int );
 void	DoMainMenu( int );
 void	DoProjectMenu( int );
-void	DoLookAtMenu(int);
+void	DoTextureMenu(int);
 void	DoRasterString( float, float, float, char * );
 void	DoStrokeString( float, float, float, float, char * );
 float	ElapsedSeconds( );
@@ -400,10 +401,7 @@ Display( )
 	glLoadIdentity( );
 
 
-	// set the eye position, look-at position, and up-vector:
-
-	if (lookInside == 0)
-	{
+	
 		//outside view
 		gluLookAt(8., 0., 8., 0., 1., 0., 0., 1., 0.);
 		
@@ -418,12 +416,7 @@ Display( )
 		if (Scale < MINSCALE)
 			Scale = MINSCALE;
 		glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
-	}
-	else
-	{
-		//inside view
-		gluLookAt(0., 0., 0.,  0., 0., -10.,  0., 1., 0.);
-	}
+	
 
 
 	// set the fog parameters:
@@ -468,30 +461,13 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
-	unsigned char* Tex = BmpToTexture("worldtex.bmp", &texWidth, &texHeight);;
-	int level, ncomps, border;
-	level = 0;
-	ncomps = 3;
-	border = 0;
 
-	
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
-
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		
-	glMatrixMode(GL_TEXTURE);
-	glTranslatef(0., 0., 0.);
-	glEnable(GL_TEXTURE_2D);
-
-	MjbSphere(RADIUS, SLICES, STACKS);
+	if (showTexture == 1) {
+		glCallList(TexturedSphereList);
+	}
+	else {
+		glCallList(BlankSphereList);
+	}
 	
 	// draw some gratuitous text that just rotates on top of the scene:
 
@@ -712,9 +688,9 @@ ElapsedSeconds( )
 	return (float)ms / 1000.f;
 }
 
-void DoLookAtMenu( int id )
+void DoTextureMenu( int id )
 {
-	lookInside = id;
+	showTexture = id;
 
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
@@ -734,9 +710,9 @@ InitMenus( )
 		glutAddMenuEntry( ColorNames[i], i );
 	}
 
-	int lookatmenu = glutCreateMenu( DoLookAtMenu);
-	glutAddMenuEntry("Outside", 0);
-	glutAddMenuEntry("Inside", 1);
+	int lookatmenu = glutCreateMenu( DoTextureMenu);
+	glutAddMenuEntry("Hide Texture", 0);
+	glutAddMenuEntry("Show Texture", 1);
 
 	int axesmenu = glutCreateMenu( DoAxesMenu );
 	glutAddMenuEntry( "Off",  0 );
@@ -772,7 +748,7 @@ InitMenus( )
 	glutAddMenuEntry( "Reset",         RESET );
 	glutAddSubMenu(   "Debug",         debugmenu);
 	glutAddMenuEntry( "Quit",          QUIT );
-	glutAddSubMenu("Look Inside", lookatmenu);
+	glutAddSubMenu("Show Texture", lookatmenu);
 // attach the pop-up menu to the right mouse button:
 
 	glutAttachMenu( GLUT_RIGHT_BUTTON );
@@ -871,6 +847,44 @@ void
 InitLists( )
 {
 	
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	glGenTextures(1, &tex0);
+	glGenTextures(1, &tex1);
+	glBindTexture(GL_TEXTURE_2D, tex0);
+		unsigned char* Tex = BmpToTexture("worldtex.bmp", &texWidth, &texHeight);;
+		int level, ncomps, border;
+		level = 0;
+		ncomps = 3;
+		border = 0;
+
+
+		TexturedSphereList = glGenLists(1);
+		glNewList(TexturedSphereList, GL_COMPILE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		
+		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
+
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+		glMatrixMode(GL_TEXTURE);
+		glTranslatef(0., 0., 0.);
+		glEnable(GL_TEXTURE_2D);
+		MjbSphere(RADIUS, SLICES, STACKS);
+		glDisable(GL_TEXTURE_2D);
+		glEndList();
+
+		BlankSphereList = glGenLists(1);
+		glNewList(BlankSphereList, GL_COMPILE);
+		MjbSphere(RADIUS, SLICES, STACKS);
+		glEndList();
+
+
 	// create the axes:
 
 	AxesList = glGenLists( 1 );

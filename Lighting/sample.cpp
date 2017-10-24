@@ -200,7 +200,7 @@ GLuint	blades;
 int		LargeBladeAngle = 15;
 int		SmallBladeAngle = 45;
 float	Time;
-GLuint	TexturedSphereList;
+GLuint	ObjectsList;
 GLuint	BlankSphereList;
 GLuint	tex0, tex1;
 bool	Distort;
@@ -473,50 +473,8 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
-	glRotatef(360.*Time, 0., 1., 0.);
-	unsigned char* Tex = BmpToTexture("worldtex.bmp", &texWidth, &texHeight);
-	if (showTexture == 1) {
-		Distort = false;
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
-
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-		glMatrixMode(GL_TEXTURE);
-		glTranslatef(0., 0., 0.);
-		glEnable(GL_TEXTURE_2D);
-		MjbSphere(RADIUS, SLICES, STACKS);
-		//glDisable(GL_TEXTURE_2D);
-	}
-	else if(showTexture == 0) {
-		Distort = false;
-		MjbSphere(RADIUS, SLICES, STACKS);
-	}
-	else if (showTexture > 1) {
-		Distort = true;
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
-
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-		glMatrixMode(GL_TEXTURE);
-		glTranslatef(0., 0., 0.);
-		glEnable(GL_TEXTURE_2D);
-		MjbSphere(RADIUS, SLICES, STACKS);
-	}
 	
+	glCallList(ObjectsList);
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	/*glDisable( GL_DEPTH_TEST );
@@ -905,6 +863,19 @@ InitGraphics( )
 void
 InitLists( )
 {
+
+	ObjectsList = glGenLists(1);
+	glNewList(ObjectsList, GL_COMPILE);
+	glScalef(-1, -1, -1);
+	glColor3f(0.875, 0.008, 0.05);
+	glutSolidTorus(RADIUS-2, RADIUS + 2, SLICES, STACKS);
+
+	glTranslatef(0., 0., -8.5);
+	glScalef(0.5, 0.5, 0.5);
+	glColor3f(0.416, 0.353, 0.804);
+	glutSolidCone(RADIUS,RADIUS, SLICES, STACKS);
+
+
 		// create the axes:
 
 	AxesList = glGenLists( 1 );

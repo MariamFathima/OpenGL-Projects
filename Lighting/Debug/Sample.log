@@ -1,12 +1,13 @@
 ﻿  sample.cpp
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(291): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(476): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1351): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1356): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1369): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1370): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1374): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\texture-mapping\sample.cpp(1375): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(291): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(870): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(875): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1322): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1327): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1340): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1341): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1345): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1346): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
-  Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Texture-Mapping\.\Debug\Sample.exe
+  Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Lighting\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

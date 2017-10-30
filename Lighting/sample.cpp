@@ -96,7 +96,7 @@ const float MINSCALE = { 0.05f };
 const int LEFT   = { 4 };
 const int MIDDLE = { 2 };
 const int RIGHT  = { 1 };
-
+float White[] = { 1.,1.,1.,1. };
 
 // which projection:
 
@@ -246,8 +246,16 @@ void	Cross(float [3], float [3], float [3]);
 float	Unit(float[3], float[3]);
 void	MjbSphere(float, int, int);
 unsigned char * BmpToTexture(char *, int *, int *);
+float * MulArray3(float, float[3]);
+float * Array3(float, float, float);
+void SetMaterial(float, float, float, float);
+void SetSpotLight(int, float, float, float, float, float, float, float, float, float);
+void SetPointLight(int, float, float, float, float, float, float);
+
+
 int		texWidth;
 int		texHeight;
+
 //variables for texture conversion:
 
 int		ReadInt(FILE *);
@@ -473,8 +481,29 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
-	
-	glCallList(ObjectsList);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, MulArray3(.3f, White));
+	SetPointLight(GL_LIGHT0, -15, 15, -5,.5, .5, .5);
+	SetMaterial(.8, .2, .2, 10);
+	glPushMatrix();
+	glScalef(-1, -1, -1);
+	glColor3f(0.875, 0.008, 0.05);
+	glutSolidTorus(RADIUS - 2, RADIUS + 2, SLICES, STACKS);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0., 0., 12);
+	glScalef(0.5, 0.5, 0.5);
+	glColor3f(0.416, 0.353, 0.804);
+	glutSolidCone(RADIUS, RADIUS, SLICES, STACKS);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-15., 8., -6);
+	glScalef(1, 1, 1);
+	glColor3f(0.5, 0.5, 0.5);
+	MjbSphere(RADIUS, SLICES, STACKS);
+	glPopMatrix();
+
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	/*glDisable( GL_DEPTH_TEST );
@@ -864,17 +893,8 @@ void
 InitLists( )
 {
 
-	ObjectsList = glGenLists(1);
-	glNewList(ObjectsList, GL_COMPILE);
-	glScalef(-1, -1, -1);
-	glColor3f(0.875, 0.008, 0.05);
-	glutSolidTorus(RADIUS-2, RADIUS + 2, SLICES, STACKS);
-
-	glTranslatef(0., 0., -8.5);
-	glScalef(0.5, 0.5, 0.5);
-	glColor3f(0.416, 0.353, 0.804);
-	glutSolidCone(RADIUS,RADIUS, SLICES, STACKS);
-
+	//ObjectsList = glGenLists(1);
+	
 
 		// create the axes:
 
@@ -943,6 +963,12 @@ MouseButton( int button, int state, int x, int y )
 			b = LEFT;		break;
 
 		case GLUT_MIDDLE_BUTTON:
+			b = MIDDLE;		break;
+		
+		case 3:
+			b = MIDDLE;		break;
+		
+		case 4:
 			b = MIDDLE;		break;
 
 		case GLUT_RIGHT_BUTTON:
@@ -1546,7 +1572,6 @@ ReadInt(FILE *fp)
 	return (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
 }
 
-
 short
 ReadShort(FILE *fp)
 {
@@ -1555,3 +1580,68 @@ ReadShort(FILE *fp)
 	b1 = fgetc(fp);
 	return (b1 << 8) | b0;
 }
+
+float *
+MulArray3(float factor, float array0[3])
+{
+	static float array[4];
+	array[0] = factor * array0[0];
+	array[1] = factor * array0[1];
+	array[2] = factor * array0[2];
+	array[3] = 1.;
+	return array;
+}
+// utility to create an array from 3 separate values:
+float *
+Array3(float a, float b, float c)
+{
+	static float array[4];
+	array[0] = a;
+	array[1] = b;
+	array[2] = c;
+	array[3] = 1.;
+	return array;
+}
+void
+SetMaterial(float r, float g, float b, float shininess)
+{
+	glMaterialfv(GL_BACK, GL_EMISSION, Array3(0., 0., 0.));
+	glMaterialfv(GL_BACK, GL_AMBIENT, MulArray3(.4f, White));
+	glMaterialfv(GL_BACK, GL_DIFFUSE, MulArray3(1., White));
+	glMaterialfv(GL_BACK, GL_SPECULAR, Array3(0., 0., 0.));
+	glMaterialf(GL_BACK, GL_SHININESS, 2.f);
+	glMaterialfv(GL_FRONT, GL_EMISSION, Array3(0., 0., 0.));
+	glMaterialfv(GL_FRONT, GL_AMBIENT, Array3(r, g, b));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, Array3(r, g, b));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, MulArray3(.8f, White));
+	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+}
+void
+SetPointLight(int ilight, float x, float y, float z, float r, float g, float b)
+{
+	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
+	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
+	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
+	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
+	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
+	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
+	glEnable(GL_LIGHTING);
+	glEnable(ilight);
+}
+
+void
+SetSpotLight(int ilight, float x, float y, float z, float xdir, float ydir, float zdir, float r, float g, float b)
+{
+	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
+	glLightfv(ilight, GL_SPOT_DIRECTION, Array3(xdir, ydir, zdir));
+	glLightf(ilight, GL_SPOT_EXPONENT, 1.);
+	glLightf(ilight, GL_SPOT_CUTOFF, 45.);
+	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
+	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
+	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
+	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
+	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
+	glEnable(GL_LIGHTING);
+	glEnable(ilight);}

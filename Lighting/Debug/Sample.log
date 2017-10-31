@@ -1,18 +1,18 @@
 ﻿  sample.cpp
 d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(299): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(489): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(491): warning C4305: 'argument': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(500): warning C4305: 'argument': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(503): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(511): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(513): warning C4305: 'argument': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(523): warning C4305: 'argument': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1414): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1419): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1432): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1433): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1437): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1438): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(490): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(492): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(501): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(504): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(512): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(514): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(524): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1430): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1435): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1448): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1449): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1453): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1454): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Lighting\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

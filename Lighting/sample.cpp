@@ -481,6 +481,7 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
+	unsigned char* Tex = BmpToTexture("worldtex.bmp", &texWidth, &texHeight);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, MulArray3(.3f, White));
 	//Green light
 	glPushMatrix();
@@ -529,6 +530,21 @@ Display( )
 
 
 	//sphere
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glMatrixMode(GL_TEXTURE);
+	glTranslatef(0., 0., 0.);
+	glEnable(GL_TEXTURE_2D);
+
 	glPushMatrix();
 	glTranslatef(-15., 8., -6);
 	glScalef(1, 1, 1);

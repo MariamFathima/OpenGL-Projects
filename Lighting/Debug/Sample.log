@@ -1,14 +1,18 @@
 ﻿  sample.cpp
 d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(299): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(486): warning C4305: 'argument': truncation from 'double' to 'float'
 d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(489): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(496): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1348): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1353): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1366): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1367): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1371): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1372): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(491): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(495): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(497): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(504): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(506): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(510): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1373): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1378): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1391): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1392): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1396): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1397): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Lighting\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

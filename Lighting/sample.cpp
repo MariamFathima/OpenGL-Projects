@@ -14,7 +14,7 @@
 #include "glew.h"
 #endif
 
-#define MS_PER_CYCLE 10
+#define MS_PER_CYCLE 5000
 #define NUMSEGS 100
 #define RADIUS 5.0
 #define SLICES 200
@@ -481,20 +481,45 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, MulArray3(.3f, White));
-	SetPointLight(GL_LIGHT0, -15, 15, -5,.5, .5, .5);
-	SetMaterial(.8, .2, .2, 10);
+	
+	
 	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glTranslatef(8, -15, -4);
+	glColor3f(.05, .8, .05);
+	glutSolidSphere(0.25, 20, 16);
+	SetPointLight(GL_LIGHT0, -15, 15, -5, .1, .8, .1);
+	glPopMatrix();
+	
+	glPushMatrix();
+	SetMaterial(.8, .2, .2, 10);
 	glScalef(-1, -1, -1);
 	glColor3f(0.875, 0.008, 0.05);
 	glutSolidTorus(RADIUS - 2, RADIUS + 2, SLICES, STACKS);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(0., 0., 12);
+	glDisable(GL_LIGHTING);
+	glTranslatef(0., 0., (Time * 7));
+	glColor3f(.2, .2, .9);
+	glutSolidSphere(0.25, 20, 16);
+	SetSpotLight(GL_LIGHT1, 0, 0, Time * 7, 1, 0, 0, .2, .2, .9);
+	glPopMatrix();
+	
+	glPushMatrix();
+	SetMaterial(.8, .8, .2, 2);
+	glTranslatef(0., 0., Time * 7);
 	glScalef(0.5, 0.5, 0.5);
-	glColor3f(0.416, 0.353, 0.804);
 	glutSolidCone(RADIUS, RADIUS, SLICES, STACKS);
+	glPopMatrix();
+
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, MulArray3(.3f, White));
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glTranslatef(-13 + RADIUS, 8 + RADIUS, -6);
+	glColor3f(1, 1, 1);
+	glutSolidSphere(0.25, 20, 16);
+	SetPointLight(GL_LIGHT0, -15, 15, -5, 1, 1, 1);
 	glPopMatrix();
 
 	glPushMatrix();

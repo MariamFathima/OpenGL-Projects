@@ -42,7 +42,7 @@
 //		6. The transformations to be reset
 //		7. The program to quit
 //
-//	Author:			Joe Graphics
+//	Author:			Aditya Gune
 
 // NOTE: There are a lot of good reasons to use const variables instead
 // of #define's.  However, Visual C++ does not allow a const variable
@@ -53,7 +53,7 @@
 
 // title of these windows:
 
-const char *WINDOWTITLE = { "OpenGL / GLUT Sample -- Joe Graphics" };
+const char *WINDOWTITLE = { "OpenGL / GLUT Sample -- Aditya Gune" };
 const char *GLUITITLE   = { "User Interface Window" };
 
 
@@ -542,7 +542,7 @@ Display( )
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glMatrixMode(GL_TEXTURE);
-	glTranslatef(0., 0., 0.);
+	glTranslatef(-15., 8., -6);
 	glEnable(GL_TEXTURE_2D);
 
 	glPushMatrix();
@@ -565,7 +565,7 @@ Display( )
 	else
 		glDisable(GL_LIGHT2);
 	glPopMatrix();
-
+	
 	
 
 	// draw some gratuitous text that just rotates on top of the scene:
@@ -1007,6 +1007,7 @@ Keyboard( unsigned char c, int x, int y )
 			break;				// happy compiler
 
 		case '0':
+		case '3':
 			Light0On = !Light0On;	 break;
 		
 		case '1':
@@ -1014,7 +1015,7 @@ Keyboard( unsigned char c, int x, int y )
 		
 		case '2':
 			Light2On = !Light2On;	 break;
-		
+
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
 	}
@@ -1726,4 +1727,5 @@ SetSpotLight(int ilight, float x, float y, float z, float xdir, float ydir, floa
 	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
 	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
 	glEnable(GL_LIGHTING);
-	glEnable(ilight);}
+	glEnable(ilight);
+}

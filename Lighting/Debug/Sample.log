@@ -7,12 +7,12 @@ d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(504): warning C
 d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(512): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(514): warning C4305: 'argument': truncation from 'double' to 'float'
 d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(524): warning C4305: 'argument': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1430): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1435): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1448): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1431): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1436): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1449): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1453): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1450): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1454): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\lighting\sample.cpp(1455): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Lighting\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

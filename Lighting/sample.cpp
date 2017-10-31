@@ -204,7 +204,7 @@ GLuint	ObjectsList;
 GLuint	BlankSphereList;
 GLuint	tex0, tex1;
 bool	Distort;
-
+bool	Light0On, Light1On, Light2On, Freeze;
 
 int level = 0;
 int ncomps = 3;
@@ -481,53 +481,76 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
-	
-	
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, MulArray3(.3f, White));
+	//Green light
 	glPushMatrix();
 	glDisable(GL_LIGHTING);
 	glTranslatef(8, -15, -4);
 	glColor3f(.05, .8, .05);
 	glutSolidSphere(0.25, 20, 16);
-	SetPointLight(GL_LIGHT0, -15, 15, -5, .1, .8, .1);
+	SetPointLight(GL_LIGHT0, -15, 15, -5, .1, .5, .1);
+	if (Light0On)
+		glEnable(GL_LIGHT0);
+	else
+		glDisable(GL_LIGHT0);
 	glPopMatrix();
 	
+	//Torus
 	glPushMatrix();
-	SetMaterial(.8, .2, .2, 10);
+	SetMaterial(.8, .2, .2, 25);
+	glShadeModel(GL_SMOOTH);
 	glScalef(-1, -1, -1);
 	glColor3f(0.875, 0.008, 0.05);
 	glutSolidTorus(RADIUS - 2, RADIUS + 2, SLICES, STACKS);
 	glPopMatrix();
 
+	//Cone light
 	glPushMatrix();
 	glDisable(GL_LIGHTING);
 	glTranslatef(0., 0., (Time * 7));
 	glColor3f(.2, .2, .9);
 	glutSolidSphere(0.25, 20, 16);
 	SetSpotLight(GL_LIGHT1, 0, 0, Time * 7, 1, 0, 0, .2, .2, .9);
+	if (Light1On)
+		glEnable(GL_LIGHT1);
+	else
+		glDisable(GL_LIGHT1);
 	glPopMatrix();
 	
+
+	//Cone
 	glPushMatrix();
 	SetMaterial(.8, .8, .2, 2);
+	glShadeModel(GL_FLAT);
 	glTranslatef(0., 0., Time * 7);
 	glScalef(0.5, 0.5, 0.5);
 	glutSolidCone(RADIUS, RADIUS, SLICES, STACKS);
 	glPopMatrix();
 
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, MulArray3(.3f, White));
-	glPushMatrix();
-	glDisable(GL_LIGHTING);
-	glTranslatef(-13 + RADIUS, 8 + RADIUS, -6);
-	glColor3f(1, 1, 1);
-	glutSolidSphere(0.25, 20, 16);
-	SetPointLight(GL_LIGHT0, -15, 15, -5, 1, 1, 1);
-	glPopMatrix();
 
+	//sphere
 	glPushMatrix();
 	glTranslatef(-15., 8., -6);
 	glScalef(1, 1, 1);
 	glColor3f(0.5, 0.5, 0.5);
 	MjbSphere(RADIUS, SLICES, STACKS);
 	glPopMatrix();
+
+	//White light
+	
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glTranslatef(-16 - RADIUS, 8 + RADIUS, -6);
+	glColor3f(1, 1, 1);
+	glutSolidSphere(0.25, 20, 16);
+	SetPointLight(GL_LIGHT2, -15, 15, -5, 1, 1, 1);
+	if (Light2On)
+		glEnable(GL_LIGHT2);
+	else
+		glDisable(GL_LIGHT2);
+	glPopMatrix();
+
+	
 
 	// draw some gratuitous text that just rotates on top of the scene:
 
@@ -952,12 +975,30 @@ Keyboard( unsigned char c, int x, int y )
 			WhichProjection = PERSP;
 			break;
 
+		case 'f':
+		case 'F':
+			Freeze = !Freeze;
+			if (Freeze)
+				glutIdleFunc(NULL);
+			else
+				glutIdleFunc(Animate);
+			break;
+
 		case 'q':
 		case 'Q':
 		case ESCAPE:
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
 
+		case '0':
+			Light0On = !Light0On;	 break;
+		
+		case '1':
+			Light1On = !Light1On;	 break;
+		
+		case '2':
+			Light2On = !Light2On;	 break;
+		
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
 	}

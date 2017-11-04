@@ -887,8 +887,10 @@ void
 InitLists( )
 {
 
-	//ObjectsList = glGenLists(1);
-	
+	SphereList = glGenLists(1);
+	glNewList(SphereList, GL_COMPILE);
+	glutSolidCone(RADIUS, RADIUS, SLICES, STACKS);
+	glEndList();
 
 		// create the axes:
 

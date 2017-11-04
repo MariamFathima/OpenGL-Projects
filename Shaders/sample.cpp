@@ -23,7 +23,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
-
+#include "glslprogram.h"
 
 
 //	This is a sample OpenGL / GLUT program
@@ -201,11 +201,11 @@ int		LargeBladeAngle = 15;
 int		SmallBladeAngle = 45;
 float	Time;
 GLuint	ObjectsList;
-GLuint	BlankSphereList;
+GLuint	SphereList;
 GLuint	tex0, tex1;
 bool	Distort;
 bool	Light0On, Light1On, Light2On, Freeze;
-
+GLSLProgram	*Pattern;
 int level = 0;
 int ncomps = 3;
 int border = 0;
@@ -481,91 +481,10 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
-	unsigned char* Tex = BmpToTexture("worldtex.bmp", &texWidth, &texHeight);
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, MulArray3(.3f, White));
-	//Green light
-	glPushMatrix();
-	glDisable(GL_LIGHTING);
-	glTranslatef(8, -15, -4);
-	glColor3f(.05, .8, .05);
-	glutSolidSphere(0.25, 20, 16);
-	SetPointLight(GL_LIGHT0, -15, 15, -5, .1, .5, .1);
-	if (Light0On)
-		glEnable(GL_LIGHT0);
-	else
-		glDisable(GL_LIGHT0);
-	glPopMatrix();
-	
-	//Torus
-	glPushMatrix();
-	SetMaterial(.8, .2, .2, 25);
-	glShadeModel(GL_SMOOTH);
-	glScalef(-1, -1, -1);
-	glColor3f(0.875, 0.008, 0.05);
-	glutSolidTorus(RADIUS - 2, RADIUS + 2, SLICES, STACKS);
-	glPopMatrix();
-
-	//Cone light
-	glPushMatrix();
-	glDisable(GL_LIGHTING);
-	glTranslatef(0., 0., (Time * 7));
-	glColor3f(.2, .2, .9);
-	glutSolidSphere(0.25, 20, 16);
-	SetSpotLight(GL_LIGHT1, 0, 0, Time * 7, 1, 0, 0, .2, .2, .9);
-	if (Light1On)
-		glEnable(GL_LIGHT1);
-	else
-		glDisable(GL_LIGHT1);
-	glPopMatrix();
-	
-
-	//Cone
-	glPushMatrix();
-	SetMaterial(.8, .8, .2, 2);
-	glShadeModel(GL_FLAT);
-	glTranslatef(0., 0., Time * 7);
-	glScalef(0.5, 0.5, 0.5);
-	glutSolidCone(RADIUS, RADIUS, SLICES, STACKS);
-	glPopMatrix();
-
-
-	//sphere
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
-
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	glMatrixMode(GL_TEXTURE);
-	glTranslatef(-15., 8., -6);
-	glEnable(GL_TEXTURE_2D);
-
-	glPushMatrix();
-	glTranslatef(-15., 8., -6);
-	glScalef(1, 1, 1);
-	glColor3f(0.5, 0.5, 0.5);
-	MjbSphere(RADIUS, SLICES, STACKS);
-	glPopMatrix();
-
-	//White light
-	
-	glPushMatrix();
-	glDisable(GL_LIGHTING);
-	glTranslatef(-16 - RADIUS, 8 + RADIUS, -6);
-	glColor3f(1, 1, 1);
-	glutSolidSphere(0.25, 20, 16);
-	SetPointLight(GL_LIGHT2, -15, 15, -5, 1, 1, 1);
-	if (Light2On)
-		glEnable(GL_LIGHT2);
-	else
-		glDisable(GL_LIGHT2);
-	glPopMatrix();
-	
+	Pattern->Use();
+	Pattern->SetUniformVariable("uTime", Time);
+	glCallList(SphereList);
+	Pattern->Use(0);
 	
 
 	// draw some gratuitous text that just rotates on top of the scene:
@@ -945,7 +864,18 @@ InitGraphics( )
 		fprintf( stderr, "GLEW initialized OK\n" );
 	fprintf( stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif
-
+	Pattern = new GLSLProgram();
+	bool valid = Pattern->Create("pattern.vert", "pattern.frag");
+	if (!valid)
+	{
+		fprintf(stderr, "Shader cannot be created!\n");
+		DoMainMenu(QUIT);
+	}
+	else
+	{
+		fprintf(stderr, "Shader created.\n");
+	}
+	Pattern->SetVerbose(false);
 }
 
 // initialize the display lists that will not change:

@@ -1,3 +1,3 @@
 
-0(15) : error C1008: undefined variable "vColor"
+0(18) : error C1008: undefined variable "rand"
 

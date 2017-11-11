@@ -14,7 +14,7 @@
 #include "glew.h"
 #endif
 
-#define MS_PER_CYCLE 5000
+#define MS_PER_CYCLE 10000
 #define NUMSEGS 100
 #define RADIUS 5.0
 #define SLICES 200
@@ -209,7 +209,10 @@ GLSLProgram	*Pattern;
 int level = 0;
 int ncomps = 3;
 int border = 0;
-
+float S0, T0;
+float Ds, Dt;
+float V0, V1, V2;
+float ColorR, ColorG, ColorB;
 
 // function prototypes:
 
@@ -483,6 +486,11 @@ Display( )
 	}*/
 	Pattern->Use();
 	Pattern->SetUniformVariable("uTime", Time);
+	Pattern->SetUniformVariable("uS0", S0);
+	Pattern->SetUniformVariable("uT0", T0);
+	Pattern->SetUniformVariable("uDs", Ds);
+	Pattern->SetUniformVariable("uDt", Dt);
+	Pattern->SetUniformVariable("uColor", ColorR, ColorG, ColorB );
 	glCallList(SphereList);
 	Pattern->Use(0);
 	
@@ -889,7 +897,7 @@ InitLists( )
 
 	SphereList = glGenLists(1);
 	glNewList(SphereList, GL_COMPILE);
-	glutSolidCone(RADIUS, RADIUS, SLICES, STACKS);
+	MjbSphere(RADIUS, SLICES, STACKS);
 	glEndList();
 
 		// create the axes:

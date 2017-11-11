@@ -212,6 +212,7 @@ int border = 0;
 float S0, T0;
 float Ds, Dt;
 float V0, V1, V2;
+float Ka, Kd, Ks;
 float ColorR, ColorG, ColorB;
 
 // function prototypes:
@@ -484,12 +485,22 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}*/
+	Ka = 3.5;
+	Kd = 2.5;
+	Ks = 0.5;
+	ColorR = 0.9;
+	ColorG = 0.2;
+	ColorB = 0.1;
 	Pattern->Use();
+	
 	Pattern->SetUniformVariable("uTime", Time);
 	Pattern->SetUniformVariable("uS0", S0);
 	Pattern->SetUniformVariable("uT0", T0);
 	Pattern->SetUniformVariable("uDs", Ds);
-	Pattern->SetUniformVariable("uDt", Dt);
+	Pattern->SetUniformVariable("uKa", Ka);
+	Pattern->SetUniformVariable("uKd", Kd);
+	Pattern->SetUniformVariable("uKs", Ks);
+	Pattern->SetUniformVariable("uShininess", 10, 1, 1);
 	Pattern->SetUniformVariable("uColor", ColorR, ColorG, ColorB );
 	glCallList(SphereList);
 	Pattern->Use(0);

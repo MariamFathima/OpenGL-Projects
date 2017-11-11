@@ -6,6 +6,7 @@ out vec3 vColor;
 out  vec3  vN;		// normal vector
 out  vec3  vL;		// vector from point to light
 out  vec3  vE;		// vector from point to eye
+uniform int uAnimate;
 vec3 LightPosition = vec3(  7., 7., 7. );
 
 const float PI = 	3.14159265;
@@ -18,9 +19,10 @@ main( )
 
 	vColor = vec3(.8, .7, .2); // set rgb from xyz!
 	vec3 nVertex = gl_Vertex.xyz;
-	
-	/*nVertex.x = gl_Vertex.x * gl_MultiTexCoord0.t * (uTime/2);
-	nVertex.y = gl_Vertex.y / gl_MultiTexCoord0.s * (uTime/2);*/
+	if(uAnimate == 1){
+		nVertex.x = gl_Vertex.x * gl_MultiTexCoord0.t * (uTime/2);
+		nVertex.y = gl_Vertex.y * gl_MultiTexCoord0.s * (uTime/2);
+	}
 	//nVertex.z = gl_MultiTexCoord0.s * uTime;
 	vST = vec2(sin(gl_MultiTexCoord0.s) * uTime, cos(gl_MultiTexCoord0.t) / uTime);
 	vec4 ECposition = gl_ModelViewMatrix * vec4( nVertex, 1. );

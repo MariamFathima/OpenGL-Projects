@@ -215,6 +215,7 @@ float V0, V1, V2;
 float Ka, Kd, Ks;
 float ColorR, ColorG, ColorB;
 float Size;
+int DoAnim;
 // function prototypes:
 
 void	Animate( );
@@ -492,8 +493,7 @@ Display( )
 	ColorG = 0.2;
 	ColorB = 0.1;
 	Size = .50;
-	S0 = .25;
-	T0 = .25;
+
 
 	Pattern->Use();
 	Pattern->SetUniformVariable("uTime", Time);
@@ -505,6 +505,7 @@ Display( )
 	Pattern->SetUniformVariable("uKs", Ks);
 	Pattern->SetUniformVariable("uShininess", 10, 1, 1);
 	Pattern->SetUniformVariable("uSize", Size);
+	Pattern->SetUniformVariable("uAnimate", DoAnim);
 	Pattern->SetUniformVariable("uColor", ColorR, ColorG, ColorB );
 	glCallList(SphereList);
 	Pattern->Use(0);
@@ -946,6 +947,28 @@ Keyboard( unsigned char c, int x, int y )
 			WhichProjection = PERSP;
 			break;
 
+		case 'v':
+		case 'V':
+			if (S0 == 0)
+			{
+				S0 = .25;
+				T0 = .25;
+			}
+			else
+			{
+				S0 = 0;
+				T0 = 0;
+			}
+			break;
+		case 'k':
+		case 'K':
+			if (DoAnim == 0) {
+				DoAnim = 1;
+			}
+			else {
+				DoAnim = 0;
+			}
+			break;
 		case 'f':
 		case 'F':
 			Freeze = !Freeze;
@@ -959,17 +982,7 @@ Keyboard( unsigned char c, int x, int y )
 		case 'Q':
 		case ESCAPE:
 			DoMainMenu( QUIT );	// will not return here
-			break;				// happy compiler
-
-		case '0':
-		case '3':
-			Light0On = !Light0On;	 break;
-		
-		case '1':
-			Light1On = !Light1On;	 break;
-		
-		case '2':
-			Light2On = !Light2On;	 break;
+			break;				// happy compile
 
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );

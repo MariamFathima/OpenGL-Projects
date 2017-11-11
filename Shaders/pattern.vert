@@ -19,10 +19,10 @@ main( )
 	vColor = vec3(.8, .7, .2); // set rgb from xyz!
 	vec3 nVertex = gl_Vertex.xyz;
 	
-	/*nVertex.x = sin(gl_Vertex.x) * uTime;
-	nVertex.y = cos(gl_Vertex.y) / uTime;
-	nVertex.z = sin(gl_Vertex.z) * uTime;*/
-	vST = gl_MultiTexCoord0.st;
+	/*nVertex.x = gl_Vertex.x * gl_MultiTexCoord0.t * (uTime/2);
+	nVertex.y = gl_Vertex.y / gl_MultiTexCoord0.s * (uTime/2);*/
+	//nVertex.z = gl_MultiTexCoord0.s * uTime;
+	vST = vec2(sin(gl_MultiTexCoord0.s) * uTime, cos(gl_MultiTexCoord0.t) / uTime);
 	vec4 ECposition = gl_ModelViewMatrix * vec4( nVertex, 1. );
 	vN = normalize( gl_NormalMatrix * gl_Normal );	// normal vector
 	vL = LightPosition - ECposition.xyz;		// vector from the point

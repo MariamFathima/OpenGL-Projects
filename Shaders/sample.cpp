@@ -16,7 +16,7 @@
 
 #define MS_PER_CYCLE 10000
 #define NUMSEGS 100
-#define RADIUS 5.0
+#define RADIUS 0.75
 #define SLICES 200
 #define STACKS 200
 
@@ -214,7 +214,7 @@ float Ds, Dt;
 float V0, V1, V2;
 float Ka, Kd, Ks;
 float ColorR, ColorG, ColorB;
-
+float Size;
 // function prototypes:
 
 void	Animate( );
@@ -491,8 +491,11 @@ Display( )
 	ColorR = 0.9;
 	ColorG = 0.2;
 	ColorB = 0.1;
+	Size = .50;
+	S0 = .25;
+	T0 = .25;
+
 	Pattern->Use();
-	
 	Pattern->SetUniformVariable("uTime", Time);
 	Pattern->SetUniformVariable("uS0", S0);
 	Pattern->SetUniformVariable("uT0", T0);
@@ -501,6 +504,7 @@ Display( )
 	Pattern->SetUniformVariable("uKd", Kd);
 	Pattern->SetUniformVariable("uKs", Ks);
 	Pattern->SetUniformVariable("uShininess", 10, 1, 1);
+	Pattern->SetUniformVariable("uSize", Size);
 	Pattern->SetUniformVariable("uColor", ColorR, ColorG, ColorB );
 	glCallList(SphereList);
 	Pattern->Use(0);

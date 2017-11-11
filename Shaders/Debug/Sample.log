@@ -3,12 +3,12 @@ d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(303): warning C4
 d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(491): warning C4305: '=': truncation from 'double' to 'float'
 d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(492): warning C4305: '=': truncation from 'double' to 'float'
 d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(493): warning C4305: '=': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1382): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1387): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1400): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1401): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1386): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1391): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1404): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1405): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1406): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1409): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1410): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 glslprogram.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Shaders\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

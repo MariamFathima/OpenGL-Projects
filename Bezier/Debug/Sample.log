@@ -1,0 +1,14 @@
+﻿  sample.cpp
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(304): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(492): warning C4305: '=': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(493): warning C4305: '=': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(494): warning C4305: '=': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1399): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1404): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1417): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1418): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1422): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\shaders\sample.cpp(1423): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+glslprogram.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+  Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Shaders\.\Debug\Sample.exe
+  Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

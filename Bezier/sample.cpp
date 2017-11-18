@@ -66,7 +66,7 @@ const int GLUIFALSE = { false };
 // the escape key:
 
 #define ESCAPE		0x1b
-
+#define NUMPOINTS 10
 
 // initial window size:
 
@@ -291,6 +291,22 @@ struct bmih
 	int biClrImportant;
 } InfoHeader;
 
+struct Point
+{
+	float x0, y0, z0;       // initial coordinates
+	float x, y, z;        // animated coordinates
+};
+
+struct Curve
+{
+	float r, g, b;
+	Point p0, p1, p2, p3;
+};
+
+Curve Curves[NUMCURVES];		// if you are creating a pattern of curves
+Curve Stem;				// if you are not
+
+
 const int birgb = { 0 };
 
 // main program:
@@ -495,20 +511,20 @@ Display( )
 	Size = .50;
 
 
-	Pattern->Use();
-	Pattern->SetUniformVariable("uTime", Time);
-	Pattern->SetUniformVariable("uS0", S0);
-	Pattern->SetUniformVariable("uT0", T0);
-	Pattern->SetUniformVariable("uDs", Ds);
-	Pattern->SetUniformVariable("uKa", Ka);
-	Pattern->SetUniformVariable("uKd", Kd);
-	Pattern->SetUniformVariable("uKs", Ks);
-	Pattern->SetUniformVariable("uShininess", 10, 1, 1);
-	Pattern->SetUniformVariable("uSize", Size);
-	Pattern->SetUniformVariable("uAnimate", DoAnim);
-	Pattern->SetUniformVariable("uColor", ColorR, ColorG, ColorB );
-	glCallList(SphereList);
-	Pattern->Use(0);
+	glLineWidth(3.);
+	glColor3f(ColorR, ColorG, ColorB);
+	glBegin(GL_LINE_STRIP);
+	for (int it = 0; it <= NUMPOINTS; it++)
+	{
+		float t = (float)it / (float)NUMPOINTS;
+		float omt = 1.f - t;
+		float x = omt*omt*omt*p0.x + 3.f*t*omt*omt*p1.x + 3.f*t*t*omt*p2.x + t*t*t*p3.x;
+		float y = omt*omt*omt*p0.y + 3.f*t*omt*omt*p1.y + 3.f*t*t*omt*p2.y + t*t*t*p3.y;
+		float z = omt*omt*omt*p0.z + 3.f*t*omt*omt*p1.z + 3.f*t*t*omt*p2.z + t*t*t*p3.z;
+		glVertex3f(x, y, z);
+	}
+	glEnd();
+	glLineWidth(1.);
 	
 
 	// draw some gratuitous text that just rotates on top of the scene:

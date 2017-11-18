@@ -66,8 +66,8 @@ const int GLUIFALSE = { false };
 // the escape key:
 
 #define ESCAPE		0x1b
-#define NUMPOINTS 10
-
+#define NUMPOINTS 4
+#define NUMCURVES 15
 // initial window size:
 
 const int INIT_WINDOW_SIZE = { 600 };
@@ -256,7 +256,7 @@ float * Array3(float, float, float);
 void SetMaterial(float, float, float, float);
 void SetSpotLight(int, float, float, float, float, float, float, float, float, float);
 void SetPointLight(int, float, float, float, float, float, float);
-
+void DrawCurve(float[4][3], float, float, float);
 
 int		texWidth;
 int		texHeight;
@@ -505,27 +505,49 @@ Display( )
 	Ka = 3.5;
 	Kd = 2.5;
 	Ks = 0.5;
-	ColorR = 0.9;
-	ColorG = 0.2;
+	ColorR = 0.2;
+	ColorG = 0.9;
 	ColorB = 0.1;
 	Size = .50;
-
-
-	glLineWidth(3.);
-	glColor3f(ColorR, ColorG, ColorB);
-	glBegin(GL_LINE_STRIP);
-	for (int it = 0; it <= NUMPOINTS; it++)
-	{
-		float t = (float)it / (float)NUMPOINTS;
-		float omt = 1.f - t;
-		float x = omt*omt*omt*p0.x + 3.f*t*omt*omt*p1.x + 3.f*t*t*omt*p2.x + t*t*t*p3.x;
-		float y = omt*omt*omt*p0.y + 3.f*t*omt*omt*p1.y + 3.f*t*t*omt*p2.y + t*t*t*p3.y;
-		float z = omt*omt*omt*p0.z + 3.f*t*omt*omt*p1.z + 3.f*t*t*omt*p2.z + t*t*t*p3.z;
-		glVertex3f(x, y, z);
-	}
-	glEnd();
-	glLineWidth(1.);
 	
+	
+	float c0[4][3] = { {5, 5, 0},
+	{ 4.75, 5.5, 0 },
+	{ 3.75, 5.5, 0 },
+	{ 3.5, 5.5, 0 } };
+
+	float c1[4][3] = { { 3.5, 5.5, 0 },
+	{ 2, 4, 0 },
+	{ 2, 2, 0 },
+	{ 2.5, 1, 0 } };
+
+	float c2[4][3] = { { 2.5, 1, 0 },
+	{ 3.75, 1, 0 },
+	{ 4.25, 1, 0 },
+	{ 4.5, 1, 0 } };
+
+	float c3[4][3] = { { 4.5, 1, 0 },
+	{ 5.75, 1, 0.33 },
+	{ 4.25, 1, 0.66 },
+	{ 3, 1, 1 } };
+
+	float c4[4][3] = { { 3, 1, 1 },
+	{ 2, 1, 1.5 },
+	{ .3, 1, 0.8 },
+	{ 1, 1, 1 } };
+
+	//animate
+	float c5[4][3] = { { 1, 1, 1 },
+	{ 0, 1,  .2 },
+	{ .5, 1, -.2},
+	{ 2, 1, -1 } };
+
+	DrawCurve(c0, ColorR, ColorG, ColorB);
+	DrawCurve(c1, ColorR, ColorG, ColorB);
+	DrawCurve(c2, ColorR, ColorG, ColorB);
+	DrawCurve(c3, ColorR, ColorG, ColorB);
+	DrawCurve(c4, ColorR, ColorG, ColorB);
+	DrawCurve(c5, ColorR, ColorG, ColorB);
 
 	// draw some gratuitous text that just rotates on top of the scene:
 
@@ -564,6 +586,55 @@ Display( )
 
 	glFlush( );
 }
+
+void DrawCurve(float pointArray[4][3], float r, float g, float b) {
+
+	Point p0, p1, p2, p3;
+	p0.x = pointArray[0][0];
+	p0.y = pointArray[0][1];
+	p0.z = pointArray[0][2];
+
+	p1.x = pointArray[1][0];
+	p1.y = pointArray[1][1];
+	p1.z = pointArray[1][2];
+
+	p2.x = pointArray[2][0];
+	p2.y = pointArray[2][1];
+	p2.z = pointArray[2][2];
+
+	p3.x = pointArray[3][0];
+	p3.y = pointArray[3][1];
+	p3.z = pointArray[3][2];
+
+	glPushMatrix();
+	glLineWidth(3.);
+	glColor3f(r, g, b);
+	glBegin(GL_LINE_STRIP);
+	for (int it = 0; it <= NUMPOINTS; it++)
+	{
+		float t = (float)it / (float)NUMPOINTS;
+		float omt = 1.f - t;
+		float x = omt*omt*omt*p0.x + 3.f*t*omt*omt*p1.x + 3.f*t*t*omt*p2.x + t*t*t*p3.x;
+		float y = omt*omt*omt*p0.y + 3.f*t*omt*omt*p1.y + 3.f*t*t*omt*p2.y + t*t*t*p3.y;
+		float z = omt*omt*omt*p0.z + 3.f*t*omt*omt*p1.z + 3.f*t*t*omt*p2.z + t*t*t*p3.z;
+		glVertex3f(x, y, z);
+	}
+	glEnd();
+	glLineWidth(1.);
+	glPopMatrix();
+
+
+	glPushMatrix();
+	glColor3f(.5, .5, .5);
+	glBegin(GL_POINT);
+	glVertex3f(p0.x, p0.y, p0.z);
+	glVertex3f(p1.x, p1.y, p1.z);
+	glVertex3f(p2.x, p2.y, p2.z);
+	glVertex3f(p3.x, p3.y, p3.z);
+	glPopMatrix();
+	glEnd();
+}
+
 float
 Dot(float v1[3], float v2[3])
 {
@@ -894,28 +965,7 @@ InitGraphics( )
 
 	// init glew (a window must be open to do this):
 
-#ifdef WIN32
-	GLenum err = glewInit( );
-	if( err != GLEW_OK )
-	{
-		fprintf( stderr, "glewInit Error\n" );
-	}
-	else
-		fprintf( stderr, "GLEW initialized OK\n" );
-	fprintf( stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-#endif
-	Pattern = new GLSLProgram();
-	bool valid = Pattern->Create("pattern.vert", "pattern.frag");
-	if (!valid)
-	{
-		fprintf(stderr, "Shader cannot be created!\n");
-		DoMainMenu(QUIT);
-	}
-	else
-	{
-		fprintf(stderr, "Shader created.\n");
-	}
-	Pattern->SetVerbose(false);
+
 }
 
 // initialize the display lists that will not change:

@@ -544,10 +544,21 @@ Display( )
 
 
 
+	//mouth and tongue
 	float c6[4][3] = { { 5, 5, 0 },
 	{ 5.3, 4.75, 0 },
 	{ 5.3, 4.75, 0 },
 	{ 5.25, 5, 0 } };
+
+	float c12[4][3] = { { 5, 5, 0 },
+	{ 5.3, 4.75, 0 },
+	{ 5.3, 4.75, 0 },
+	{ 5.75, 4.5, 0 } };
+	float c13[4][3] = { { 5.75, 4.5, 0 },
+	{ 5.3, 4.75, 0 },
+	{ 5.3, 4.75, 0 },
+	{ 5.5, 4.25, 0 } };
+
 
 
 
@@ -576,6 +587,8 @@ Display( )
 	{ .3, 1, 0.8 },
 	{ 1, 1, 1 } };
 
+
+	glTranslatef(-2, -2, 0);
 	DrawCurve(c0, ColorR, ColorG, ColorB);
 	DrawCurve(c1, ColorR, ColorG, ColorB);
 	DrawCurve(c2, ColorR, ColorG, ColorB);
@@ -584,12 +597,17 @@ Display( )
 	DrawCurve(c5, ColorR, ColorG, ColorB);
 
 	DrawCurve(c6, ColorR, ColorG, ColorB);
+	DrawCurve(c12, .8, .2, .1);
+	DrawCurve(c13, .8, .2, .1);
+
 
 	DrawCurve(c7, ColorR, ColorG, ColorB);
 	DrawCurve(c8, ColorR, ColorG, ColorB);
 	DrawCurve(c9, ColorR, ColorG, ColorB);
 	DrawCurve(c11, ColorR, ColorG, ColorB);
 	DrawCurve(c10, ColorR, ColorG, ColorB);
+
+
 
 	// draw some gratuitous text that just rotates on top of the scene:
 

@@ -1,20 +1,3 @@
-﻿  sample.cpp
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(320): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(508): warning C4305: '=': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(509): warning C4305: '=': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(510): warning C4305: '=': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(532): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(532): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(537): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(537): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(543): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(543): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1465): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1470): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1483): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1484): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1488): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1489): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-glslprogram.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+﻿glslprogram.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Bezier\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

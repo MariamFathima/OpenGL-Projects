@@ -542,12 +542,54 @@ Display( )
 	{ .5, 1, -.2},
 	{ 2, 1, -1 } };
 
+
+
+	float c6[4][3] = { { 5, 5, 0 },
+	{ 5.3, 4.75, 0 },
+	{ 5.3, 4.75, 0 },
+	{ 5.25, 5, 0 } };
+
+
+
+	float c7[4][3] = { { 5.25, 5, 0 },
+	{ 4.75, 6, 0 },
+	{ 3.75, 6, 0 },
+	{ 3.0, 5.75, 0 } };
+
+	float c8[4][3] = { { 3.0, 5.75, 0 },
+	{ 1.5, 4, 0 },
+	{ 1.5, 2, 0 },
+	{ 2, 1, 0 } };
+
+	float c9[4][3] = { { 2, 1, 0 },
+	{ 1.75, 1, -.5 },
+	{ 4.25, 1, -.5 },
+	{ 4.5, 1, -.25 } };
+
+	float c10[4][3] = { { 4.5, 1, -.25 },
+	{ 6, 1, .15 },
+	{ 6, 1, 0.66 },
+	{ 3, 1, 1.5 } };
+
+	float c11[4][3] = { { 3, 1, 1.5 },
+	{ 2, 1, 1.5 },
+	{ .3, 1, 0.8 },
+	{ 1, 1, 1 } };
+
 	DrawCurve(c0, ColorR, ColorG, ColorB);
 	DrawCurve(c1, ColorR, ColorG, ColorB);
 	DrawCurve(c2, ColorR, ColorG, ColorB);
 	DrawCurve(c3, ColorR, ColorG, ColorB);
 	DrawCurve(c4, ColorR, ColorG, ColorB);
 	DrawCurve(c5, ColorR, ColorG, ColorB);
+
+	DrawCurve(c6, ColorR, ColorG, ColorB);
+
+	DrawCurve(c7, ColorR, ColorG, ColorB);
+	DrawCurve(c8, ColorR, ColorG, ColorB);
+	DrawCurve(c9, ColorR, ColorG, ColorB);
+	DrawCurve(c11, ColorR, ColorG, ColorB);
+	DrawCurve(c10, ColorR, ColorG, ColorB);
 
 	// draw some gratuitous text that just rotates on top of the scene:
 

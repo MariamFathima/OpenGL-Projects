@@ -1,32 +1,34 @@
 ﻿  sample.cpp
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(320): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(508): warning C4305: '=': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(509): warning C4305: '=': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(322): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
 d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(510): warning C4305: '=': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(532): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(532): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(511): warning C4305: '=': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(512): warning C4305: '=': truncation from 'double' to 'float'
 d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(537): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
 d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(537): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(543): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(543): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(551): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(551): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(542): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(542): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(548): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(548): warning C4305: 'initializing': truncation from 'double' to 'float'
 d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(556): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
 d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(556): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(560): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(560): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(583): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(583): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(588): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(588): warning C4305: 'initializing': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(600): warning C4305: 'argument': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(601): warning C4305: 'argument': truncation from 'double' to 'float'
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1525): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1530): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1543): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1544): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1548): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1549): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(561): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(561): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(565): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(565): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(585): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(585): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(590): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(590): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(602): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(603): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(707): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(717): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1557): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1562): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1575): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1576): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1580): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\aditya\documents\github\graphics-projects\bezier\sample.cpp(1581): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 glslprogram.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Bezier\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

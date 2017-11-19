@@ -170,6 +170,17 @@ const GLfloat Colors[ ][3] =
 };
 
 
+struct Point
+{
+	float x0, y0, z0;       // initial coordinates
+	float x, y, z;        // animated coordinates
+};
+
+struct Curve
+{
+	float r, g, b;
+	Point p0, p1, p2, p3;
+};
 // fog parameters:
 
 const GLfloat FOGCOLOR[4] = { .0, .0, .0, 1. };
@@ -216,6 +227,8 @@ float Ka, Kd, Ks;
 float ColorR, ColorG, ColorB;
 float Size;
 int DoAnim;
+float aP = 0.0;
+float aL = 0.0;
 // function prototypes:
 
 void	Animate( );
@@ -256,7 +269,7 @@ float * Array3(float, float, float);
 void SetMaterial(float, float, float, float);
 void SetSpotLight(int, float, float, float, float, float, float, float, float, float);
 void SetPointLight(int, float, float, float, float, float, float);
-void DrawCurve(float[4][3], float, float, float);
+Curve DrawCurve(float[4][3], float, float, float);
 
 int		texWidth;
 int		texHeight;
@@ -291,17 +304,6 @@ struct bmih
 	int biClrImportant;
 } InfoHeader;
 
-struct Point
-{
-	float x0, y0, z0;       // initial coordinates
-	float x, y, z;        // animated coordinates
-};
-
-struct Curve
-{
-	float r, g, b;
-	Point p0, p1, p2, p3;
-};
 
 Curve Curves[NUMCURVES];		// if you are creating a pattern of curves
 Curve Stem;				// if you are not
@@ -386,10 +388,10 @@ Animate( )
 void
 Display( )
 {
-	if( DebugOn != 0 )
+	/*if( DebugOn != 0 )
 	{
 		fprintf( stderr, "Display\n" );
-	}
+	}*/
 
 
 	// set which window we want to do the graphics into:
@@ -510,6 +512,9 @@ Display( )
 	ColorB = 0.1;
 	Size = .50;
 	
+	Curve curve0, curve1, curve2, curve3, curve4, curve5,
+		curve6, curve7, curve8, curve9, curve10, curve11,
+		curve12, curve13;
 	
 	float c0[4][3] = { {5, 5, 0},
 	{ 4.75, 5.5, 0 },
@@ -559,9 +564,6 @@ Display( )
 	{ 5.3, 4.75, 0 },
 	{ 5.5, 4.25, 0 } };
 
-
-
-
 	float c7[4][3] = { { 5.25, 5, 0 },
 	{ 4.75, 6, 0 },
 	{ 3.75, 6, 0 },
@@ -587,26 +589,27 @@ Display( )
 	{ .3, 1, 0.8 },
 	{ 1, 1, 1 } };
 
-
+	glEnable(GL_BLEND);
 	glTranslatef(-2, -2, 0);
-	DrawCurve(c0, ColorR, ColorG, ColorB);
-	DrawCurve(c1, ColorR, ColorG, ColorB);
-	DrawCurve(c2, ColorR, ColorG, ColorB);
-	DrawCurve(c3, ColorR, ColorG, ColorB);
-	DrawCurve(c4, ColorR, ColorG, ColorB);
-	DrawCurve(c5, ColorR, ColorG, ColorB);
+	curve0 = DrawCurve(c0, ColorR, ColorG, ColorB);
+	curve1 = DrawCurve(c1, ColorR, ColorG, ColorB);
+	curve2 = DrawCurve(c2, ColorR, ColorG, ColorB);
+	curve3 = DrawCurve(c3, ColorR, ColorG, ColorB);
+	curve4 = DrawCurve(c4, ColorR, ColorG, ColorB);
+	curve5 = DrawCurve(c5, ColorR, ColorG, ColorB);
 
-	DrawCurve(c6, ColorR, ColorG, ColorB);
-	DrawCurve(c12, .8, .2, .1);
-	DrawCurve(c13, .8, .2, .1);
+	curve6 = DrawCurve(c6, ColorR, ColorG, ColorB);
+	curve12 = DrawCurve(c12, .8, .2, .1);
+	curve13 = DrawCurve(c13, .8, .2, .1);
+	glDisable(GL_BLEND);
 
+	curve7 = DrawCurve(c7, ColorR, ColorG, ColorB);
+	curve8 = DrawCurve(c8, ColorR, ColorG, ColorB);
+	curve9 = DrawCurve(c9, ColorR, ColorG, ColorB);
+	curve10 = DrawCurve(c10, ColorR, ColorG, ColorB);
+	curve11 = DrawCurve(c11, ColorR, ColorG, ColorB);
 
-	DrawCurve(c7, ColorR, ColorG, ColorB);
-	DrawCurve(c8, ColorR, ColorG, ColorB);
-	DrawCurve(c9, ColorR, ColorG, ColorB);
-	DrawCurve(c11, ColorR, ColorG, ColorB);
-	DrawCurve(c10, ColorR, ColorG, ColorB);
-
+	
 
 
 	// draw some gratuitous text that just rotates on top of the scene:
@@ -647,8 +650,8 @@ Display( )
 	glFlush( );
 }
 
-void DrawCurve(float pointArray[4][3], float r, float g, float b) {
-
+Curve DrawCurve(float pointArray[4][3], float r, float g, float b) {
+	
 	Point p0, p1, p2, p3;
 	p0.x = pointArray[0][0];
 	p0.y = pointArray[0][1];
@@ -666,6 +669,7 @@ void DrawCurve(float pointArray[4][3], float r, float g, float b) {
 	p3.y = pointArray[3][1];
 	p3.z = pointArray[3][2];
 
+	//draw the curve
 	glPushMatrix();
 	glLineWidth(3.);
 	glColor3f(r, g, b);
@@ -680,19 +684,51 @@ void DrawCurve(float pointArray[4][3], float r, float g, float b) {
 		glVertex3f(x, y, z);
 	}
 	glEnd();
-	glLineWidth(1.);
 	glPopMatrix();
+	
+	if (aL > 0.0) {
+		//draw control lines
+		glPushMatrix();
+		glLineWidth(1.);
+		glColor3f(1, 1, 1);
+		glBegin(GL_LINE_STRIP);
+		glVertex3f(p0.x, p0.y, p0.z);
+		glVertex3f(p1.x, p1.y, p1.z);
+		glVertex3f(p2.x, p2.y, p2.z);
+		glVertex3f(p3.x, p3.y, p3.z);
+		glEnd();
+		glPopMatrix();
+	}
 
+	if (aP > 0.0) {
+		//draw p0 and p3
+		glPushMatrix();
+		glPointSize(5);
+		glColor4f(.8, .8, .2, aP);
+		glBegin(GL_POINTS);
+			glVertex3f(p0.x, p0.y, p0.z);
+			glVertex3f(p3.x, p3.y, p3.z);
+		glEnd();
+		glPopMatrix();
 
-	glPushMatrix();
-	glColor3f(.5, .5, .5);
-	glBegin(GL_POINT);
-	glVertex3f(p0.x, p0.y, p0.z);
-	glVertex3f(p1.x, p1.y, p1.z);
-	glVertex3f(p2.x, p2.y, p2.z);
-	glVertex3f(p3.x, p3.y, p3.z);
-	glPopMatrix();
-	glEnd();
+		//draw p1 and p2
+		glPushMatrix();
+		glPointSize(5);
+		glColor4f(.2, .8, .8, aP);
+		glBegin(GL_POINTS);
+			glVertex3f(p1.x, p1.y, p1.z);
+			glVertex3f(p2.x, p2.y, p2.z);
+		glEnd();
+		glPopMatrix();
+	}
+	//create the curve object to return
+	Curve tCurve;
+		tCurve.p0 = p0;
+		tCurve.p1 = p1;
+		tCurve.p2 = p2;
+		tCurve.p3 = p3;
+
+	return tCurve;
 }
 
 float
@@ -1075,25 +1111,21 @@ Keyboard( unsigned char c, int x, int y )
 
 		case 'v':
 		case 'V':
-			if (S0 == 0)
-			{
-				S0 = .25;
-				T0 = .25;
+			if (aP == 0.0) {
+				aP = 1.0;
+			} else {
+				aP = 0.0;
 			}
-			else
-			{
-				S0 = 0;
-				T0 = 0;
-			}
+			fprintf(stderr, "alpha point = %f \nalpha line = %f\n", aP, aL);
 			break;
 		case 'k':
 		case 'K':
-			if (DoAnim == 0) {
-				DoAnim = 1;
+			if (aL == 0.0) {
+				aL = 1.0;
+			} else {
+				aL = 0.0;
 			}
-			else {
-				DoAnim = 0;
-			}
+			fprintf(stderr, "alpha point = %f \nalpha line = %f\n", aP, aL);
 			break;
 		case 'f':
 		case 'F':

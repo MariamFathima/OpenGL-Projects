@@ -14,7 +14,7 @@
 #include "glew.h"
 #endif
 
-#define MS_PER_CYCLE 10000
+#define MS_PER_CYCLE 10
 #define NUMSEGS 100
 #define RADIUS 0.75
 #define SLICES 200
@@ -215,7 +215,7 @@ GLuint	ObjectsList;
 GLuint	SphereList;
 GLuint	tex0, tex1;
 bool	Distort;
-bool	Light0On, Light1On, Light2On, Freeze;
+bool	Light0On, Light1On, Light2On, Freeze = 1;
 GLSLProgram	*Pattern;
 int level = 0;
 int ncomps = 3;
@@ -270,7 +270,8 @@ void SetMaterial(float, float, float, float);
 void SetSpotLight(int, float, float, float, float, float, float, float, float, float);
 void SetPointLight(int, float, float, float, float, float, float);
 Curve DrawCurve(float[4][3], float, float, float);
-
+void RotateTail(float, float, float, float);
+void RotateTongue(float, float, float);
 int		texWidth;
 int		texHeight;
 
@@ -305,9 +306,82 @@ struct bmih
 } InfoHeader;
 
 
-Curve Curves[NUMCURVES];		// if you are creating a pattern of curves
-Curve Stem;				// if you are not
+Curve curve0, curve1, curve2, curve3, curve4, curve5,
+curve6, curve7, curve8, curve9, curve10, curve11,
+curve12, curve13;
 
+float c0[4][3] = { { 5, 5, 0 },
+{ 4.75, 5.5, 0 },
+{ 3.75, 5.5, 0 },
+{ 3.5, 5.5, 0 } };
+
+float c1[4][3] = { { 3.5, 5.5, 0 },
+{ 2, 4, 0 },
+{ 2, 2, 0 },
+{ 2.5, 1, 0 } };
+
+float c2[4][3] = { { 2.5, 1, 0 },
+{ 3.75, 1, 0 },
+{ 4.25, 1, 0 },
+{ 4.5, 1, 0 } };
+
+float c3[4][3] = { { 4.5, 1, 0 },
+{ 5.75, 1, 0.33 },
+{ 4.25, 1, 0.66 },
+{ 3, 1, 1 } };
+
+float c4[4][3] = { { 3, 1, 1 },
+{ 2, 1, 1.5 },
+{ .3, 1, 0.8 },
+{ 1, 1, 1 } };
+
+//animate
+float c5[4][3] = { { 1, 1, 1 },
+{ 0, 1,  .2 },
+{ .5, 1, -.2 },
+{ 2, 1, -1 } };
+
+
+
+//mouth and tongue
+float c6[4][3] = { { 5, 5, 0 },
+{ 5.3, 4.75, 0 },
+{ 5.3, 4.75, 0 },
+{ 5.25, 5, 0 } };
+
+float c12[4][3] = { { 5, 5, 0 },
+{ 5.3, 4.75, 0 },
+{ 5.3, 4.75, 0 },
+{ 5.75, 4.5, 0 } };
+float c13[4][3] = { { 5.75, 4.5, 0 },
+{ 5.3, 4.75, 0 },
+{ 5.3, 4.75, 0 },
+{ 5.5, 4.25, 0 } };
+
+float c7[4][3] = { { 5.25, 5, 0 },
+{ 4.75, 6, 0 },
+{ 3.75, 6, 0 },
+{ 3.0, 5.75, 0 } };
+
+float c8[4][3] = { { 3.0, 5.75, 0 },
+{ 1.5, 4, 0 },
+{ 1.5, 2, 0 },
+{ 2, 1, 0 } };
+
+float c9[4][3] = { { 2, 1, 0 },
+{ 1.75, 1, -.5 },
+{ 4.25, 1, -.5 },
+{ 4.5, 1, -.25 } };
+
+float c10[4][3] = { { 4.5, 1, -.25 },
+{ 6, 1, .15 },
+{ 6, 1, 0.66 },
+{ 3, 1, 1.5 } };
+
+float c11[4][3] = { { 3, 1, 1.5 },
+{ 2, 1, 1.5 },
+{ .3, 1, 0.8 },
+{ 1, 1, 1 } };
 
 const int birgb = { 0 };
 
@@ -512,84 +586,16 @@ Display( )
 	ColorB = 0.1;
 	Size = .50;
 	
-	Curve curve0, curve1, curve2, curve3, curve4, curve5,
-		curve6, curve7, curve8, curve9, curve10, curve11,
-		curve12, curve13;
+	float deg = 5.0;
+	float xc = 0.5;
+	float yc = 0.0;
+	float zc = 0.0;
+	float Tzc = 0.01 + Time;
+	if (!Freeze) {
+		RotateTail(deg* Time, xc, yc, zc);
+		RotateTongue( xc, yc, Tzc);
+	}
 	
-	float c0[4][3] = { {5, 5, 0},
-	{ 4.75, 5.5, 0 },
-	{ 3.75, 5.5, 0 },
-	{ 3.5, 5.5, 0 } };
-
-	float c1[4][3] = { { 3.5, 5.5, 0 },
-	{ 2, 4, 0 },
-	{ 2, 2, 0 },
-	{ 2.5, 1, 0 } };
-
-	float c2[4][3] = { { 2.5, 1, 0 },
-	{ 3.75, 1, 0 },
-	{ 4.25, 1, 0 },
-	{ 4.5, 1, 0 } };
-
-	float c3[4][3] = { { 4.5, 1, 0 },
-	{ 5.75, 1, 0.33 },
-	{ 4.25, 1, 0.66 },
-	{ 3, 1, 1 } };
-
-	float c4[4][3] = { { 3, 1, 1 },
-	{ 2, 1, 1.5 },
-	{ .3, 1, 0.8 },
-	{ 1, 1, 1 } };
-
-	//animate
-	float c5[4][3] = { { 1, 1, 1 },
-	{ 0, 1,  .2 },
-	{ .5, 1, -.2},
-	{ 2, 1, -1 } };
-
-
-
-	//mouth and tongue
-	float c6[4][3] = { { 5, 5, 0 },
-	{ 5.3, 4.75, 0 },
-	{ 5.3, 4.75, 0 },
-	{ 5.25, 5, 0 } };
-
-	float c12[4][3] = { { 5, 5, 0 },
-	{ 5.3, 4.75, 0 },
-	{ 5.3, 4.75, 0 },
-	{ 5.75, 4.5, 0 } };
-	float c13[4][3] = { { 5.75, 4.5, 0 },
-	{ 5.3, 4.75, 0 },
-	{ 5.3, 4.75, 0 },
-	{ 5.5, 4.25, 0 } };
-
-	float c7[4][3] = { { 5.25, 5, 0 },
-	{ 4.75, 6, 0 },
-	{ 3.75, 6, 0 },
-	{ 3.0, 5.75, 0 } };
-
-	float c8[4][3] = { { 3.0, 5.75, 0 },
-	{ 1.5, 4, 0 },
-	{ 1.5, 2, 0 },
-	{ 2, 1, 0 } };
-
-	float c9[4][3] = { { 2, 1, 0 },
-	{ 1.75, 1, -.5 },
-	{ 4.25, 1, -.5 },
-	{ 4.5, 1, -.25 } };
-
-	float c10[4][3] = { { 4.5, 1, -.25 },
-	{ 6, 1, .15 },
-	{ 6, 1, 0.66 },
-	{ 3, 1, 1.5 } };
-
-	float c11[4][3] = { { 3, 1, 1.5 },
-	{ 2, 1, 1.5 },
-	{ .3, 1, 0.8 },
-	{ 1, 1, 1 } };
-
-	glEnable(GL_BLEND);
 	glTranslatef(-2, -2, 0);
 	curve0 = DrawCurve(c0, ColorR, ColorG, ColorB);
 	curve1 = DrawCurve(c1, ColorR, ColorG, ColorB);
@@ -601,7 +607,6 @@ Display( )
 	curve6 = DrawCurve(c6, ColorR, ColorG, ColorB);
 	curve12 = DrawCurve(c12, .8, .2, .1);
 	curve13 = DrawCurve(c13, .8, .2, .1);
-	glDisable(GL_BLEND);
 
 	curve7 = DrawCurve(c7, ColorR, ColorG, ColorB);
 	curve8 = DrawCurve(c8, ColorR, ColorG, ColorB);
@@ -649,6 +654,84 @@ Display( )
 
 	glFlush( );
 }
+
+void
+RotateTail(float deg, float xc, float yc, float zc)
+{
+	if (deg > 180 ||  deg < -180) {
+		deg = 0 - deg;
+	}
+	float rad = deg * (M_PI / 180.f);         // radians
+
+	float x = c4[3][0] - xc;
+	float y = c4[3][1] - yc;
+	float z = c4[3][2] - zc;
+
+	float xp = x;
+	float yp = y*cos(rad) - z*sin(rad);
+	float zp = y*sin(rad) + z*cos(rad);
+
+	c4[3][0] = xp + xc;
+	c4[3][1] = yp + yc;
+	c4[3][2] = zp + zc;
+	/**********************/
+
+
+
+	for (int i = 0; i < 4; i++)
+	{
+		x = c5[i][0] - xc;
+		y = c5[i][1] - yc;
+		z = c5[i][2] - zc;
+
+		xp = x;
+		yp = y*cos(rad) - z*sin(rad);
+		zp = y*sin(rad) + z*cos(rad);
+
+		c5[i][0] = xp + xc;
+		c5[i][1] = yp + yc;
+		c5[i][2] = zp + zc;
+	}
+	
+
+	/*******************/
+	x = c11[3][0] - xc;
+	y = c11[3][1] - yc;
+	z = c11[3][2] - zc;
+
+	xp = x;
+	yp = y*cos(rad) - z*sin(rad);
+	zp = y*sin(rad) + z*cos(rad);
+
+	c11[3][0] = xp + xc;
+	c11[3][1] = yp + yc;
+	c11[3][2] = zp + zc;
+}
+
+void
+RotateTongue(float xc, float yc, float zc)
+{
+	if (c12[3][2] + zc > .75) {
+
+		c12[3][2] -= zc/7;
+
+		c13[0][2] -= zc/7;
+		c13[1][2] -= zc/7;
+		c13[2][2] -= zc/7;
+		c13[3][2] -= zc/7;
+	}
+	else {
+
+		c12[3][2] += zc/7;
+
+		c13[0][2] += zc/7;
+		c13[1][2] += zc/7;
+		c13[2][2] += zc/7;
+		c13[3][2] += zc/7;
+	}
+	
+}
+
 
 Curve DrawCurve(float pointArray[4][3], float r, float g, float b) {
 	

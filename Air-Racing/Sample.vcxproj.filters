@@ -22,4 +22,9 @@
   <ItemGroup>
     <None Include="heli.550" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

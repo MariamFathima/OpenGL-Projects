@@ -17,7 +17,7 @@
 #define NUMSEGS 100
 #define WIDTH .5
 #define HEIGHT 1
-#define NUMCUBES 5
+#define NUMCUBES 20
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -95,7 +95,7 @@ const float MINSCALE = { 0.05f };
 const int LEFT   = { 4 };
 const int MIDDLE = { 2 };
 const int RIGHT  = { 1 };
-
+float White[] = { 1.,1.,1.,1. };
 
 // which projection:
 
@@ -194,7 +194,11 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
-std::vector<std::vector<float>> rgbvec, xyzvec;	//vectors to hold things
+int		texWidth;
+int		texHeight;
+int		level = 0;
+int		ncomps = 3;
+int		border = 0;
 
 // function prototypes:
 
@@ -220,16 +224,62 @@ void	MouseMotion( int, int );
 void	Reset( );
 void	Resize( int, int );
 void	Visibility( int );
-void	drawCube( float width, float height);
+void	DrawCube( );
 void	Axes( float );
 void	HsvRgb( float[3], float [3] );
-float	getRandFloat();
+float	getRandFloat(int min = 0, int max = 1);
+float	Dot(float[3], float[3]);
+void	Cross(float[3], float[3], float[3]);
+float	Unit(float[3], float[3]);
+void	MjbSphere(float, int, int);
+unsigned char * BmpToTexture(char *, int *, int *);
+float * MulArray3(float, float[3]);
+float * Array3(float, float, float);
+void SetMaterial(float, float, float, float);
+void SetSpotLight(int, float, float, float, float, float, float, float, float, float);
+void SetPointLight(int, float, float, float, float, float, float);
+
+
+//variables for texture conversion:
+
+int		ReadInt(FILE *);
+short	ReadShort(FILE *);
+
+
+struct bmfh
+{
+	short bfType;
+	int bfSize;
+	short bfReserved1;
+	short bfReserved2;
+	int bfOffBits;
+} FileHeader;
+
+struct bmih
+{
+	int biSize;
+	int biWidth;
+	int biHeight;
+	short biPlanes;
+	short biBitCount;
+	int biCompression;
+	int biSizeImage;
+	int biXPelsPerMeter;
+	int biYPelsPerMeter;
+	int biClrUsed;
+	int biClrImportant;
+} InfoHeader;
+
+const int birgb = { 0 };
+
 
 // main program:
 
 int
 main( int argc, char *argv[ ] )
 {
+	texWidth = 1024;
+	texHeight = 768;
 	//seed our rand to make things interesting
 	srand(time(NULL));
 
@@ -406,36 +456,7 @@ Display( )
 	// draw the current object:
 
 	
-	if (xyzvec.size() < 1) {
-		//Generate the list of colors for the appropriate number of cubes
-		for (int i = 0; i < NUMCUBES; i++)
-		{
-
-			float r = .5;
-			float g = .5;
-			float b = .5;
-
-			std::vector<float> tvec = { r, g, b };
-			rgbvec.push_back(tvec);
-		
-			float x = .1;
-			float y = .1;
-			float z = .1;
-
-			std::vector<float> xvec = { x, y, z };
-			xyzvec.push_back(xvec);
-
-		}
-	}
-	float pos = 0;
-	
-	for (int i = 0; i < NUMCUBES; i++)
-	{
-		glTranslatef(pos, 0, 0);
-		drawCube(WIDTH, HEIGHT + getRandFloat());
-		pos += WIDTH;
-	}
-	
+	glCallList(BoxList);
 
 
 	// draw some gratuitous text that just rotates on top of the scene:
@@ -476,82 +497,49 @@ Display( )
 	glFlush( );
 }
 
-float getRandFloat()
+float getRandFloat(int min, int max)
 {
-	float x = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	std::cout << x << std::endl;
+	float x = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 	return x;
 }
 
-void drawCube(float width, float height)
+void DrawCube()
 {
 	//get placeholder floats for glVertex3f
-	float r = .5;
-	float g = .5; 
-	float b = .5;
-
-	/*
-	NOTE TO SELF:
-		If the polygon is centered at the origin,
-		good way to know which planes are which is check the (x, y, z)
-		Xright == x >= 0; Xleft == x < 0
-		Ytop == y >= 0; Ybot == y < 0
-		Znear == z >= 0; Zfar == z <0
-	*/
-
-	//base
+	
 	glBegin(GL_QUADS);
-	glColor3f(r, g, b);
-	glVertex3f(0, 0, 0);
-	glVertex3f(width, 0, 0);
-	glVertex3f(width, 0, width);
-	glVertex3f(0, 0, width);
-	glEnd();
-
-	//near-z
-	glBegin(GL_QUADS);
-	glColor3f(r, g, b);
-	glVertex3f(0, 0, 0);
-	glVertex3f(width, 0, 0);
-	glVertex3f(width, height, 0);
-	glVertex3f(0, height, 0);
-	glEnd();
-
-	//far-z
-	glBegin(GL_QUADS);
-	glColor3f(r, g, b);
-	glVertex3f(0, 0, width);
-	glVertex3f(width, 0, width);
-	glVertex3f(width, height, width);
-	glVertex3f(0, height, width);
+	// Front Face
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);  // Bottom Left Of The Texture and Quad
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);  // Bottom Right Of The Texture and Quad
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);  // Top Right Of The Texture and Quad
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);  // Top Left Of The Texture and Quad
+															  // Back Face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);  // Top Right Of The Texture and Quad
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);  // Top Left Of The Texture and Quad
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
+															   // Top Face
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);  // Top Left Of The Texture and Quad
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f);  // Bottom Left Of The Texture and Quad
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, 1.0f, 1.0f);  // Bottom Right Of The Texture and Quad
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);  // Top Right Of The Texture and Quad
+															  // Bottom Face
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Top Right Of The Texture and Quad
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, -1.0f, -1.0f);  // Top Left Of The Texture and Quad
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);  // Bottom Left Of The Texture and Quad
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);  // Bottom Right Of The Texture and Quad
+															   // Right face
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);  // Top Right Of The Texture and Quad
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);  // Top Left Of The Texture and Quad
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);  // Bottom Left Of The Texture and Quad
+															  // Left Face
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);  // Bottom Right Of The Texture and Quad
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);  // Top Right Of The Texture and Quad
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);  // Top Left Of The Texture and Quad
 	glEnd();
 	
-	//left-x
-	glBegin(GL_QUADS);
-	glColor3f(r, g, b);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 0, width);
-	glVertex3f(0, height, width);
-	glVertex3f(0, height, 0);
-	glEnd();
-
-	//right-x
-	glBegin(GL_QUADS);
-	glColor3f(r, g, b);
-	glVertex3f(width, 0, 0);
-	glVertex3f(width, 0, width);
-	glVertex3f(width, 0, width);
-	glVertex3f(width, height, width);
-	glEnd();
-
-	//top
-	glBegin(GL_QUADS);
-	glColor3f(r, g, b);
-	glVertex3f(width, 0, 0);
-	glVertex3f(width, 0, width);
-	glVertex3f(width, height, width);
-	glVertex3f(width, height, 0);
-	glEnd();
 
 }
 void
@@ -852,60 +840,40 @@ InitLists( )
 	float dx = BOXSIZE / 2.f;
 	float dy = BOXSIZE / 2.f;
 	float dz = BOXSIZE / 2.f;
+	float randx = 0;
+	float randy = 0;
 	glutSetWindow( MainWindow );
+	unsigned char* Tex = BmpToTexture("buildingtex.bmp", &texWidth, &texHeight);
 
-	// create the object:
 
 	BoxList = glGenLists( 1 );
 	glNewList( BoxList, GL_COMPILE );
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glBegin( GL_QUADS );
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
 
-			glColor3f( 0., 0., 1. );
-			glNormal3f( 0., 0.,  1. );
-				glVertex3f( -dx, -dy,  dz );
-				glVertex3f(  dx, -dy,  dz );
-				glVertex3f(  dx,  dy,  dz );
-				glVertex3f( -dx,  dy,  dz );
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-			glNormal3f( 0., 0., -1. );
-				glTexCoord2f( 0., 0. );
-				glVertex3f( -dx, -dy, -dz );
-				glTexCoord2f( 0., 1. );
-				glVertex3f( -dx,  dy, -dz );
-				glTexCoord2f( 1., 1. );
-				glVertex3f(  dx,  dy, -dz );
-				glTexCoord2f( 1., 0. );
-				glVertex3f(  dx, -dy, -dz );
+		glMatrixMode(GL_TEXTURE);
 
-			glColor3f( 1., 0., 0. );
-			glNormal3f(  1., 0., 0. );
-				glVertex3f(  dx, -dy,  dz );
-				glVertex3f(  dx, -dy, -dz );
-				glVertex3f(  dx,  dy, -dz );
-				glVertex3f(  dx,  dy,  dz );
+		for (int i = 0; i < 2; i++)
+		{
+			randx = getRandFloat((-5 * 1.5 *  WIDTH), (5 * 1.5 *  WIDTH));
+			randy = getRandFloat((-5 * 1.5 * WIDTH), (5 * 1.5 * WIDTH));
+			float r = HEIGHT + getRandFloat(0, 3);
+			
+			glPushMatrix();
+			glTranslatef(randx, (r / 4), randy);
+			glScalef(1, 2, 1);
+			glEnable(GL_TEXTURE_2D);
+			DrawCube();
+			glPopMatrix();
 
-			glNormal3f( -1., 0., 0. );
-				glVertex3f( -dx, -dy,  dz );
-				glVertex3f( -dx,  dy,  dz );
-				glVertex3f( -dx,  dy, -dz );
-				glVertex3f( -dx, -dy, -dz );
-
-			glColor3f( 0., 1., 0. );
-			glNormal3f( 0.,  1., 0. );
-				glVertex3f( -dx,  dy,  dz );
-				glVertex3f(  dx,  dy,  dz );
-				glVertex3f(  dx,  dy, -dz );
-				glVertex3f( -dx,  dy, -dz );
-
-			glNormal3f( 0., -1., 0. );
-				glVertex3f( -dx, -dy,  dz );
-				glVertex3f( -dx, -dy, -dz );
-				glVertex3f(  dx, -dy, -dz );
-				glVertex3f(  dx, -dy,  dz );
-
-		glEnd( );
-
+		}
 	glEndList( );
 
 
@@ -1326,3 +1294,201 @@ DrawPoint(struct point *p)
 	glVertex3f(p->x, p->y, p->z);
 }
 
+/* BMPTOTEXTURE.CPP STARTS HERE */
+unsigned char *
+BmpToTexture(char *filename, int *width, int *height)
+{
+
+	int s, t, e;		// counters
+	int numextra;		// # extra bytes each line in the file is padded with
+	FILE *fp;
+	unsigned char *texture;
+	int nums, numt;
+	unsigned char *tp;
+
+
+	fp = fopen(filename, "rb");
+	if (fp == NULL)
+	{
+		fprintf(stderr, "Cannot open Bmp file '%s'\n", filename);
+		return NULL;
+	}
+
+	FileHeader.bfType = ReadShort(fp);
+
+
+	// if bfType is not 0x4d42, the file is not a bmp:
+
+	if (FileHeader.bfType != 0x4d42)
+	{
+		fprintf(stderr, "Wrong type of file: 0x%0x\n", FileHeader.bfType);
+		fclose(fp);
+		return NULL;
+	}
+
+
+	FileHeader.bfSize = ReadInt(fp);
+	FileHeader.bfReserved1 = ReadShort(fp);
+	FileHeader.bfReserved2 = ReadShort(fp);
+	FileHeader.bfOffBits = ReadInt(fp);
+
+
+	InfoHeader.biSize = ReadInt(fp);
+	InfoHeader.biWidth = ReadInt(fp);
+	InfoHeader.biHeight = ReadInt(fp);
+
+	nums = InfoHeader.biWidth;
+	numt = InfoHeader.biHeight;
+
+	InfoHeader.biPlanes = ReadShort(fp);
+	InfoHeader.biBitCount = ReadShort(fp);
+	InfoHeader.biCompression = ReadInt(fp);
+	InfoHeader.biSizeImage = ReadInt(fp);
+	InfoHeader.biXPelsPerMeter = ReadInt(fp);
+	InfoHeader.biYPelsPerMeter = ReadInt(fp);
+	InfoHeader.biClrUsed = ReadInt(fp);
+	InfoHeader.biClrImportant = ReadInt(fp);
+
+
+	// fprintf( stderr, "Image size found: %d x %d\n", ImageWidth, ImageHeight );
+
+
+	texture = new unsigned char[3 * nums * numt];
+	if (texture == NULL)
+	{
+		fprintf(stderr, "Cannot allocate the texture array!\b");
+		return NULL;
+	}
+
+
+	// extra padding bytes:
+
+	numextra = 4 * (((3 * InfoHeader.biWidth) + 3) / 4) - 3 * InfoHeader.biWidth;
+
+
+	// we do not support compression:
+
+	if (InfoHeader.biCompression != birgb)
+	{
+		fprintf(stderr, "Wrong type of image compression: %d\n", InfoHeader.biCompression);
+		fclose(fp);
+		return NULL;
+	}
+
+
+
+	rewind(fp);
+	fseek(fp, 14 + 40, SEEK_SET);
+
+	if (InfoHeader.biBitCount == 24)
+	{
+		for (t = 0, tp = texture; t < numt; t++)
+		{
+			for (s = 0; s < nums; s++, tp += 3)
+			{
+				*(tp + 2) = fgetc(fp);		// b
+				*(tp + 1) = fgetc(fp);		// g
+				*(tp + 0) = fgetc(fp);		// r
+			}
+
+			for (e = 0; e < numextra; e++)
+			{
+				fgetc(fp);
+			}
+		}
+	}
+
+	fclose(fp);
+
+	*width = nums;
+	*height = numt;
+	return texture;
+}
+
+
+
+int
+ReadInt(FILE *fp)
+{
+	unsigned char b3, b2, b1, b0;
+	b0 = fgetc(fp);
+	b1 = fgetc(fp);
+	b2 = fgetc(fp);
+	b3 = fgetc(fp);
+	return (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
+}
+
+short
+ReadShort(FILE *fp)
+{
+	unsigned char b1, b0;
+	b0 = fgetc(fp);
+	b1 = fgetc(fp);
+	return (b1 << 8) | b0;
+}
+
+float *
+MulArray3(float factor, float array0[3])
+{
+	static float array[4];
+	array[0] = factor * array0[0];
+	array[1] = factor * array0[1];
+	array[2] = factor * array0[2];
+	array[3] = 1.;
+	return array;
+}
+// utility to create an array from 3 separate values:
+float *
+Array3(float a, float b, float c)
+{
+	static float array[4];
+	array[0] = a;
+	array[1] = b;
+	array[2] = c;
+	array[3] = 1.;
+	return array;
+}
+void
+SetMaterial(float r, float g, float b, float shininess)
+{
+	glMaterialfv(GL_BACK, GL_EMISSION, Array3(0., 0., 0.));
+	glMaterialfv(GL_BACK, GL_AMBIENT, MulArray3(.4f, White));
+	glMaterialfv(GL_BACK, GL_DIFFUSE, MulArray3(1., White));
+	glMaterialfv(GL_BACK, GL_SPECULAR, Array3(0., 0., 0.));
+	glMaterialf(GL_BACK, GL_SHININESS, 2.f);
+	glMaterialfv(GL_FRONT, GL_EMISSION, Array3(0., 0., 0.));
+	glMaterialfv(GL_FRONT, GL_AMBIENT, Array3(r, g, b));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, Array3(r, g, b));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, MulArray3(.8f, White));
+	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+}
+void
+SetPointLight(int ilight, float x, float y, float z, float r, float g, float b)
+{
+	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
+	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
+	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
+	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
+	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
+	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
+	glEnable(GL_LIGHTING);
+	glEnable(ilight);
+}
+
+void
+SetSpotLight(int ilight, float x, float y, float z, float xdir, float ydir, float zdir, float r, float g, float b)
+{
+	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
+	glLightfv(ilight, GL_SPOT_DIRECTION, Array3(xdir, ydir, zdir));
+	glLightf(ilight, GL_SPOT_EXPONENT, 1.);
+	glLightf(ilight, GL_SPOT_CUTOFF, 45.);
+	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
+	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
+	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
+	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
+	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
+	glEnable(GL_LIGHTING);
+	glEnable(ilight);
+}

@@ -18,6 +18,9 @@
     <ClCompile Include="sample.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="loadobjfile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="heli.550" />

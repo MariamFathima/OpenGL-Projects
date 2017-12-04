@@ -1,7 +1,10 @@
 ﻿  sample.cpp
-d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(284): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(865): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(866): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(288): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(469): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(874): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(875): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(896): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\aditya\documents\github\graphics-projects\air-racing\sample.cpp(913): warning C4305: 'argument': truncation from 'double' to 'float'
+loadobjfile.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   Sample.vcxproj -> D:\Aditya\Documents\GitHub\Graphics-Projects\Air-Racing\.\Debug\Sample.exe
   Sample.vcxproj -> .\Debug/Sample.pdb (Full PDB)

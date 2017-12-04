@@ -17,7 +17,8 @@
 #define NUMSEGS 100
 #define WIDTH .5
 #define HEIGHT 1
-#define NUMCUBES 20
+#define MAXHEIGHT 6
+#define NUMCUBES 5000
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -187,7 +188,7 @@ int		DebugOn;				// != 0 means to print debugging info
 int		DepthCueOn;				// != 0 means to use intensity depth cueing
 int		DepthBufferOn;			// != 0 means to use the z-buffer
 int		DepthFightingOn;		// != 0 means to use the z-buffer
-GLuint	BoxList;				// object display list
+GLuint	WorldList;				// object display list
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
 int		WhichColor;				// index into Colors[ ]
@@ -199,7 +200,9 @@ int		texHeight;
 int		level = 0;
 int		ncomps = 3;
 int		border = 0;
-
+GLuint	SunList;
+GLuint	obj1, obj2, obj3;
+std::vector<std::vector<float>> allObjRanges;
 // function prototypes:
 
 void	Animate( );
@@ -235,10 +238,11 @@ void	MjbSphere(float, int, int);
 unsigned char * BmpToTexture(char *, int *, int *);
 float * MulArray3(float, float[3]);
 float * Array3(float, float, float);
-void SetMaterial(float, float, float, float);
-void SetSpotLight(int, float, float, float, float, float, float, float, float, float);
-void SetPointLight(int, float, float, float, float, float, float);
-
+void	SetMaterial(float, float, float, float);
+void	SetSpotLight(int, float, float, float, float, float, float, float, float, float);
+void	SetPointLight(int, float, float, float, float, float, float);
+void	SetInfiniteLight(int ilight, float x, float y, float z, float r, float g, float b);
+std::vector<float> LoadObjFile(char * name);
 
 //variables for texture conversion:
 
@@ -278,8 +282,8 @@ const int birgb = { 0 };
 int
 main( int argc, char *argv[ ] )
 {
-	texWidth = 1024;
-	texHeight = 768;
+	texWidth = 800;
+	texHeight = 800;
 	//seed our rand to make things interesting
 	srand(time(NULL));
 
@@ -455,10 +459,17 @@ Display( )
 
 	// draw the current object:
 
-	
-	glCallList(BoxList);
+	glEnable(GL_LIGHTING);
+	glCallList(WorldList);
+	glCallList(SunList);
 
-
+	glPushMatrix();
+		glTranslatef(0, MAXHEIGHT, 0);
+		glRotatef(-90, 1, 0, 0);
+		glColor3f(.8, .2, .2);
+		glScalef( (1 / allObjRanges[0][0]), (1 / allObjRanges[0][1]), (1 / allObjRanges[0][2]) );
+		glCallList(obj1);
+	glPopMatrix();
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	/*glDisable( GL_DEPTH_TEST );
@@ -845,9 +856,8 @@ InitLists( )
 	glutSetWindow( MainWindow );
 	unsigned char* Tex = BmpToTexture("buildingtex.bmp", &texWidth, &texHeight);
 
-
-	BoxList = glGenLists( 1 );
-	glNewList( BoxList, GL_COMPILE );
+	WorldList = glGenLists( 1 );
+	glNewList( WorldList, GL_COMPILE );
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
@@ -857,23 +867,35 @@ InitLists( )
 		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, Tex);
 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-		//glMatrixMode(GL_TEXTURE);
-
+		glEnable(GL_TEXTURE_2D);
+		glShadeModel(GL_FLAT);
 		for (int i = 0; i < NUMCUBES; i++)
 		{
-			randx = getRandFloat((-5 * 1.5 *  WIDTH), (5 * 1.5 *  WIDTH));
-			randz = getRandFloat((-5 * 1.5 * WIDTH), (5 * 1.5 * WIDTH));
-			float r = HEIGHT + getRandFloat(0, 3);
+			randx = getRandFloat((-(sqrt(NUMCUBES)) * 1.5 *  WIDTH), ((sqrt(NUMCUBES)) * 1.5 *  WIDTH));
+			randz = getRandFloat((-(sqrt(NUMCUBES)) * 1.5 * WIDTH), ((sqrt(NUMCUBES)) * 1.5 * WIDTH));
+			float r = HEIGHT + getRandFloat(0, MAXHEIGHT);
 			
 			glPushMatrix();
 			glTranslatef(randx, (r / 4), randz);
 			glScalef(1, r, 1);
-			glEnable(GL_TEXTURE_2D);
+			
 			DrawCube();
 			glPopMatrix();
-
 		}
+
+		glPushMatrix();
+			glBegin(GL_QUADS);
+				glVertex3f(-10000, 0, -10000);
+				glVertex3f(10000, 0, -10000);
+				glVertex3f(10000, 0, 10000);
+				glVertex3f(-10000, 0, 10000);
+			glEnd();
+		glPopMatrix();
+
+		glPushMatrix();
+		glColor3f(0.529, 0.808, 0.980);
+			glutSolidSphere(1000, 100, 100);
+		glPopMatrix();
 	glEndList( );
 
 
@@ -885,6 +907,19 @@ InitLists( )
 			Axes( 1.5 );
 		glLineWidth( 1. );
 	glEndList( );
+
+	SunList = glGenLists(1);
+	glNewList(SunList, GL_COMPILE);
+		SetInfiniteLight(GL_LIGHT0, 5, 5, -5, 1.000, 0.980, 0.804);
+		glEnable(GL_LIGHT0);
+	glEndList();
+
+	std::vector<float> objRange;
+	obj1 = glGenLists(1);
+	glNewList(obj1, GL_COMPILE);
+	objRange = LoadObjFile("A380.obj");
+	allObjRanges.push_back(objRange);
+	glEndList();
 }
 
 
@@ -1448,6 +1483,17 @@ Array3(float a, float b, float c)
 	array[3] = 1.;
 	return array;
 }
+
+float *
+InfiniteLightArray(float a, float b, float c)
+{
+	static float array[4];
+	array[0] = a;
+	array[1] = b;
+	array[2] = c;
+	array[3] = 0.;
+	return array;
+}
 void
 SetMaterial(float r, float g, float b, float shininess)
 {
@@ -1465,6 +1511,11 @@ SetMaterial(float r, float g, float b, float shininess)
 void
 SetPointLight(int ilight, float x, float y, float z, float r, float g, float b)
 {
+	glPushMatrix();
+		glTranslatef(x, y, z);
+		glColor3f(r,g,b);
+		glutSolidSphere(0.25, 20, 16);
+	glPopMatrix();
 	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
 	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
 	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
@@ -1475,10 +1526,34 @@ SetPointLight(int ilight, float x, float y, float z, float r, float g, float b)
 	glEnable(GL_LIGHTING);
 	glEnable(ilight);
 }
+void
+SetInfiniteLight(int ilight, float x, float y, float z, float r, float g, float b)
+{
+	glPushMatrix();
+		glTranslatef(x, y, z);
+		glColor3f(r, g, b);
+		glutSolidSphere(0.25, 20, 16);
+	glPopMatrix();
+	glLightfv(ilight, GL_POSITION, InfiniteLightArray(x, y, z));
+	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
+	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
+	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
+	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
+	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(ilight);
+}
 
 void
 SetSpotLight(int ilight, float x, float y, float z, float xdir, float ydir, float zdir, float r, float g, float b)
 {
+	glPushMatrix();
+		glTranslatef(x, y, z);
+		glColor3f(r, g, b);
+		glutSolidSphere(0.25, 20, 16);
+	glPopMatrix();
 	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
 	glLightfv(ilight, GL_SPOT_DIRECTION, Array3(xdir, ydir, zdir));
 	glLightf(ilight, GL_SPOT_EXPONENT, 1.);

@@ -117,6 +117,12 @@ enum ButtonVals
 };
 
 
+enum Objects {
+	PLANE,
+	FIGHTER,
+	WOLF
+};
+
 // window background color (rgba):
 
 const GLfloat BACKCOLOR[ ] = { 0., 0., 0., 1. };
@@ -207,12 +213,15 @@ std::vector<std::vector<float>> allObjRanges;
 float yawAngle, pitchAngle, bankAngle;
 GLuint	buildingtex, planetex, fightertex, wolftex, skytex;
 float Time;
+int		eyeView;
+Objects objectLoaded;
 // function prototypes:
 
 void	Animate( );
 void	Display( );
 void	DoAxesMenu( int );
 void	DoColorMenu( int );
+void	DoLookAtMenu( int );
 void	DoDepthBufferMenu( int );
 void	DoDepthFightingMenu( int );
 void	DoDepthMenu( int );
@@ -412,9 +421,15 @@ Display( )
 
 
 	// set the eye position, look-at position, and up-vector:
-
-	gluLookAt( 0., 0., 3.,     0., 0., 0.,     0., 1., 0. );
-
+	if (eyeView == 1) {
+		Reset();
+		gluLookAt(0., 6., -1. - Time,
+			0.+yawAngle, 0+pitchAngle, -10.,
+			0., 1., 0.);
+	}
+	else {
+		gluLookAt(0., 2., 3., 0., 0., 0., 0., 1., 0.);
+	}
 
 	// rotate the scene:
 
@@ -465,7 +480,7 @@ Display( )
 	glEnable(GL_LIGHTING);
 	glCallList(WorldList);
 	glCallList(SunList);
-
+	
 	glPushMatrix();
 		glRotatef(-yawAngle, 0, 1, 0);
 		glTranslatef(0, MAXHEIGHT, 0-Time);
@@ -475,6 +490,7 @@ Display( )
 		glCallList(obj1);
 	glPopMatrix();
 	
+
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	/*glDisable( GL_DEPTH_TEST );
@@ -589,6 +605,23 @@ DoColorMenu( int id )
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
+}
+
+void LoadObjectMenu(int id) 
+{ 
+
+
+
+}
+void DoLookAtMenu(int id)
+{
+	eyeView = id;
+	if (eyeView == 1)
+		glutMotionFunc(NULL);
+	else
+		glutMotionFunc(MouseMotion);
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 }
 
 
@@ -734,6 +767,10 @@ InitMenus( )
 		glutAddMenuEntry( ColorNames[i], i );
 	}
 
+	int lookatmenu = glutCreateMenu(DoLookAtMenu);
+	glutAddMenuEntry("Outside", 0);
+	glutAddMenuEntry("Inside", 1);
+
 	int axesmenu = glutCreateMenu( DoAxesMenu );
 	glutAddMenuEntry( "Off",  0 );
 	glutAddMenuEntry( "On",   1 );
@@ -759,6 +796,7 @@ InitMenus( )
 	glutAddMenuEntry( "Perspective",   PERSP );
 
 	int mainmenu = glutCreateMenu( DoMainMenu );
+	glutAddSubMenu(	  "Look Inside",   lookatmenu);
 	glutAddSubMenu(   "Axes",          axesmenu);
 	glutAddSubMenu(   "Colors",        colormenu);
 	glutAddSubMenu(   "Depth Buffer",  depthbuffermenu);
@@ -943,22 +981,32 @@ InitLists( )
 	obj1 = glGenLists(1);
 	glNewList(obj1, GL_COMPILE);
 
-	glGenTextures(1, &planetex);
-	glBindTexture(GL_TEXTURE_2D, planetex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glGenTextures(1, &planetex);
+		glBindTexture(GL_TEXTURE_2D, planetex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, PlaneTex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, PlaneTex);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glEnable(GL_TEXTURE_2D);
-	glShadeModel(GL_FLAT);
-	
-	objRange = LoadObjFile("A380.obj");
-	allObjRanges.push_back(objRange);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glEnable(GL_TEXTURE_2D);
+		glShadeModel(GL_FLAT);
+		
+		if (objectLoaded == FIGHTER) {
+			objRange = LoadObjFile("F15.obj");
+		}
+		else if (objectLoaded == WOLF) {
+			objRange = LoadObjFile("Wolf.obj");
+		}
+		else {
+			objRange = LoadObjFile("A380.obj");
+			objectLoaded = PLANE;
+		}
+		
+		allObjRanges.push_back(objRange);
 	glEndList();
 }
 
@@ -989,6 +1037,10 @@ Keyboard( unsigned char c, int x, int y )
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
 		
+		case 'r':
+			DoLookAtMenu(!eyeView);
+			break;
+
 		case 'd':
 			yawAngle += .1;
 			break;
@@ -1096,6 +1148,7 @@ MouseMotion( int x, int y )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
+
 
 
 // reset the transformations and the colors:

@@ -19,6 +19,7 @@
 #define HEIGHT 1
 #define MAXHEIGHT 6
 #define NUMCUBES 5000
+#define MS_IN_THE_ANIMATION_CYCLE	10000
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -203,6 +204,9 @@ int		border = 0;
 GLuint	SunList;
 GLuint	obj1, obj2, obj3;
 std::vector<std::vector<float>> allObjRanges;
+float yawAngle, pitchAngle, bankAngle;
+GLuint	buildingtex, planetex, fightertex, wolftex, skytex;
+float Time;
 // function prototypes:
 
 void	Animate( );
@@ -337,10 +341,9 @@ main( int argc, char *argv[ ] )
 void
 Animate( )
 {
-	// put animation stuff in here -- change some global variables
-	// for Display( ) to find:
-
-	// force a call to Display( ) next time it is convenient:
+	int ms = glutGet(GLUT_ELAPSED_TIME);	// milliseconds
+	ms %= MS_IN_THE_ANIMATION_CYCLE;
+	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;        // [ 0., 1. )
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
@@ -464,12 +467,14 @@ Display( )
 	glCallList(SunList);
 
 	glPushMatrix();
-		glTranslatef(0, MAXHEIGHT, 0);
-		glRotatef(-90, 1, 0, 0);
-		glColor3f(.8, .2, .2);
+		glRotatef(-yawAngle, 0, 1, 0);
+		glTranslatef(0, MAXHEIGHT, 0-Time);
+		glRotatef(-90 - pitchAngle, 1, 0, 0);
 		glScalef( (1 / allObjRanges[0][0]), (1 / allObjRanges[0][1]), (1 / allObjRanges[0][2]) );
+		glBindTexture(GL_TEXTURE_2D, planetex);
 		glCallList(obj1);
 	glPopMatrix();
+	
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	/*glDisable( GL_DEPTH_TEST );
@@ -514,44 +519,58 @@ float getRandFloat(int min, int max)
 	return x;
 }
 
-void DrawCube()
-{
-	//get placeholder floats for glVertex3f
-	
-	glBegin(GL_QUADS);
-	// Front Face
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.25f, -0.25f, 0.25f);  // Bottom Left Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.0f); glVertex3f(0.25f, -0.25f, 0.25f);  // Bottom Right Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.25f); glVertex3f(0.25f, 0.25f, 0.25f);  // Top Right Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.25f); glVertex3f(-0.25f, 0.25f, 0.25f);  // Top Left Of The Texture and Quad
-															  // Back Face
-	glTexCoord2f(0.25f, 0.0f); glVertex3f(-0.25f, -0.25f, -0.25f);  // Bottom Right Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.25f); glVertex3f(-0.25f, 0.25f, -0.25f);  // Top Right Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.25f); glVertex3f(0.25f, 0.25f, -0.25f);  // Top Left Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.25f, -0.25f, -0.25f);  // Bottom Left Of The Texture and Quad
-															   // Top Face
-	glTexCoord2f(0.0f, 0.25f); glVertex3f(-0.25f, 0.25f, -0.25f);  // Top Left Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.25f, 0.25f, 0.25f);  // Bottom Left Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.0f); glVertex3f(0.25f, 0.25f, 0.25f);  // Bottom Right Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.25f); glVertex3f(0.25f, 0.25f, -0.25f);  // Top Right Of The Texture and Quad
-															  // Bottom Face
-	glTexCoord2f(0.25f, 0.25f); glVertex3f(-0.25f, -0.25f, -0.25f);  // Top Right Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.25f); glVertex3f(0.25f, -0.25f, -0.25f);  // Top Left Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.25f, -0.25f, 0.25f);  // Bottom Left Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.0f); glVertex3f(-0.25f, -0.25f, 0.25f);  // Bottom Right Of The Texture and Quad
-															   // Right face
-	glTexCoord2f(0.25f, 0.0f); glVertex3f(0.25f, -0.25f, -0.25f);  // Bottom Right Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.25f); glVertex3f(0.25f, 0.25f, -0.25f);  // Top Right Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.25f); glVertex3f(0.25f, 0.25f, 0.25f);  // Top Left Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.25f, -0.25f, 0.25f);  // Bottom Left Of The Texture and Quad
-															  // Left Face
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.25f, -0.25f, -0.25f);  // Bottom Left Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.0f); glVertex3f(-0.25f, -0.25f, 0.25f);  // Bottom Right Of The Texture and Quad
-	glTexCoord2f(0.25f, 0.25f); glVertex3f(-0.25f, 0.25f, 0.25f);  // Top Right Of The Texture and Quad
-	glTexCoord2f(0.0f, 0.25f); glVertex3f(-0.25f, 0.25f, -0.25f);  // Top Left Of The Texture and Quad
-	glEnd();
-	
 
+void DrawCube()
+{	
+
+	/*
+	Self made cube function because glutSolidCube 
+	does not have texture coordinates
+	LL = Lower Left
+	UL = Upper Left
+	LR = Lower Right
+	UR = Upper Right	
+	*/
+
+	glBegin(GL_QUADS);
+	
+		// Near Z plane
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.25f, -0.25f, 0.25f);  // LL 
+		glTexCoord2f(0.25f, 0.0f); glVertex3f(0.25f, -0.25f, 0.25f);  // LR 
+		glTexCoord2f(0.25f, 0.25f); glVertex3f(0.25f, 0.25f, 0.25f);  // UR 
+		glTexCoord2f(0.0f, 0.25f); glVertex3f(-0.25f, 0.25f, 0.25f);  // UL 
+	
+		// Far Z plane
+		glTexCoord2f(0.25f, 0.0f); glVertex3f(-0.25f, -0.25f, -0.25f);  // LR 
+		glTexCoord2f(0.25f, 0.25f); glVertex3f(-0.25f, 0.25f, -0.25f);  // UR 
+		glTexCoord2f(0.0f, 0.25f); glVertex3f(0.25f, 0.25f, -0.25f);  // UL 
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(0.25f, -0.25f, -0.25f);  // LL 
+															   
+		// Top Y plane
+		glTexCoord2f(0.0f, 0.25f); glVertex3f(-0.25f, 0.25f, -0.25f);  // UL 
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.25f, 0.25f, 0.25f);  // LL 
+		glTexCoord2f(0.25f, 0.0f); glVertex3f(0.25f, 0.25f, 0.25f);  // LR 
+		glTexCoord2f(0.25f, 0.25f); glVertex3f(0.25f, 0.25f, -0.25f);  // UR 
+	
+		// Bottom Y plane
+		glTexCoord2f(0.25f, 0.25f); glVertex3f(-0.25f, -0.25f, -0.25f);  // UR 
+		glTexCoord2f(0.0f, 0.25f); glVertex3f(0.25f, -0.25f, -0.25f);  // UL 
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(0.25f, -0.25f, 0.25f);  // LL 
+		glTexCoord2f(0.25f, 0.0f); glVertex3f(-0.25f, -0.25f, 0.25f);  // LR 
+															   
+		// Right X plane
+		glTexCoord2f(0.25f, 0.0f); glVertex3f(0.25f, -0.25f, -0.25f);  // LR 
+		glTexCoord2f(0.25f, 0.25f); glVertex3f(0.25f, 0.25f, -0.25f);  // UR 
+		glTexCoord2f(0.0f, 0.25f); glVertex3f(0.25f, 0.25f, 0.25f);  // UL 
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(0.25f, -0.25f, 0.25f);  // LL 
+															  
+		// Left X plane
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.25f, -0.25f, -0.25f);  // LL 
+		glTexCoord2f(0.25f, 0.0f); glVertex3f(-0.25f, -0.25f, 0.25f);  // LR 
+		glTexCoord2f(0.25f, 0.25f); glVertex3f(-0.25f, 0.25f, 0.25f);  // UR 
+		glTexCoord2f(0.0f, 0.25f); glVertex3f(-0.25f, 0.25f, -0.25f);  // UL 
+	
+	glEnd();
 }
 void
 DoAxesMenu( int id )
@@ -822,7 +841,7 @@ InitGraphics( )
 	glutTabletButtonFunc( NULL );
 	glutMenuStateFunc( NULL );
 	glutTimerFunc( -1, NULL, 0 );
-	glutIdleFunc( NULL );
+	glutIdleFunc( Animate );
 
 	// init glew (a window must be open to do this):
 
@@ -855,9 +874,13 @@ InitLists( )
 	float randz = 0;
 	glutSetWindow( MainWindow );
 	unsigned char* Tex = BmpToTexture("buildingtex.bmp", &texWidth, &texHeight);
+	unsigned char* PlaneTex = BmpToTexture("metaltex.bmp", &texWidth, &texHeight);
 
 	WorldList = glGenLists( 1 );
 	glNewList( WorldList, GL_COMPILE );
+
+		glGenTextures(1, &buildingtex);
+		glBindTexture(GL_TEXTURE_2D, buildingtex);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
@@ -878,11 +901,12 @@ InitLists( )
 			glPushMatrix();
 			glTranslatef(randx, (r / 4), randz);
 			glScalef(1, r, 1);
-			
+			glBindTexture(GL_TEXTURE_2D, buildingtex);
 			DrawCube();
 			glPopMatrix();
 		}
 
+		//ground
 		glPushMatrix();
 			glBegin(GL_QUADS);
 				glVertex3f(-10000, 0, -10000);
@@ -892,6 +916,7 @@ InitLists( )
 			glEnd();
 		glPopMatrix();
 
+		//sky
 		glPushMatrix();
 		glColor3f(0.529, 0.808, 0.980);
 			glutSolidSphere(1000, 100, 100);
@@ -917,6 +942,21 @@ InitLists( )
 	std::vector<float> objRange;
 	obj1 = glGenLists(1);
 	glNewList(obj1, GL_COMPILE);
+
+	glGenTextures(1, &planetex);
+	glBindTexture(GL_TEXTURE_2D, planetex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(GL_TEXTURE_2D, level, ncomps, texWidth, texHeight, border, GL_RGB, GL_UNSIGNED_BYTE, PlaneTex);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glEnable(GL_TEXTURE_2D);
+	glShadeModel(GL_FLAT);
+	
 	objRange = LoadObjFile("A380.obj");
 	allObjRanges.push_back(objRange);
 	glEndList();
@@ -948,6 +988,22 @@ Keyboard( unsigned char c, int x, int y )
 		case ESCAPE:
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
+		
+		case 'd':
+			yawAngle += .1;
+			break;
+		
+		case 'a':
+			yawAngle -= .1;
+			break;
+
+		case 'w':
+			pitchAngle += .1;
+			break;
+
+		case 's':
+			pitchAngle -= .1;
+			break;
 
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );

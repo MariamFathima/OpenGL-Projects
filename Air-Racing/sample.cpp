@@ -214,7 +214,7 @@ float yawAngle, pitchAngle, bankAngle;
 GLuint	buildingtex, planetex, fightertex, wolftex, skytex;
 float Time;
 int		eyeView;
-Objects objectLoaded;
+Objects objectLoaded = PLANE;
 // function prototypes:
 
 void	Animate( );
@@ -424,11 +424,11 @@ Display( )
 	if (eyeView == 1) {
 		Reset();
 		gluLookAt(0., 6., -1. - Time,
-			0.+yawAngle, 0+pitchAngle, -10.,
+			0.+yawAngle, 0-pitchAngle, -10.,
 			0., 1., 0.);
 	}
 	else {
-		gluLookAt(0., 2., 3., 0., 0., 0., 0., 1., 0.);
+		gluLookAt(0., 8., 3., 0., 0., 0., 0., 1., 0.);
 	}
 
 	// rotate the scene:
@@ -484,10 +484,39 @@ Display( )
 	glPushMatrix();
 		glRotatef(-yawAngle, 0, 1, 0);
 		glTranslatef(0, MAXHEIGHT, 0-Time);
-		glRotatef(-90 - pitchAngle, 1, 0, 0);
-		glScalef( (1 / allObjRanges[0][0]), (1 / allObjRanges[0][1]), (1 / allObjRanges[0][2]) );
-		glBindTexture(GL_TEXTURE_2D, planetex);
-		glCallList(obj1);
+		glRotatef(0 - pitchAngle, 1, 0, 0);
+		glScalef( (1 / allObjRanges[objectLoaded][0]), (1 / allObjRanges[objectLoaded][1]), (1 / allObjRanges[objectLoaded][2]) );
+		//glBindTexture(GL_TEXTURE_2D, planetex);
+
+		glPushMatrix();
+		if (objectLoaded == PLANE)
+		{
+			glRotatef(-90, 1, 0, 0);
+			glColor4f(.8, .1, .1, 1.);
+			glCallList(obj1);
+		}
+		glPopMatrix();
+		glPushMatrix();
+		if (objectLoaded == FIGHTER)
+		{
+			glColor4f(.1, .8, .1, 1.);
+			glCallList(obj2);
+		}
+		glPopMatrix();
+		glPushMatrix();
+		if (objectLoaded == WOLF)
+		{
+			glScalef(1, 1, 3);
+			glRotatef(180, 0, 1, 0);
+			glColor4f(.2, .2, .6, 1.);
+			glCallList(obj3);
+		}
+		
+			
+		
+		glPopMatrix();
+			
+
 	glPopMatrix();
 	
 
@@ -609,8 +638,15 @@ DoColorMenu( int id )
 
 void LoadObjectMenu(int id) 
 { 
-
-
+	if (id == 0)
+		objectLoaded = PLANE;
+	else if (id == 1)
+		objectLoaded = FIGHTER;
+	else if (id == 2)
+		objectLoaded = WOLF;
+	std::cout << "loaded object " << objectLoaded << std::endl;
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
 
 }
 void DoLookAtMenu(int id)
@@ -767,6 +803,11 @@ InitMenus( )
 		glutAddMenuEntry( ColorNames[i], i );
 	}
 
+	int objectmenu = glutCreateMenu(LoadObjectMenu);
+	glutAddMenuEntry("Plane", 0);
+	glutAddMenuEntry("Fighter", 1);
+	glutAddMenuEntry("Wolf", 2);
+
 	int lookatmenu = glutCreateMenu(DoLookAtMenu);
 	glutAddMenuEntry("Outside", 0);
 	glutAddMenuEntry("Inside", 1);
@@ -797,6 +838,7 @@ InitMenus( )
 
 	int mainmenu = glutCreateMenu( DoMainMenu );
 	glutAddSubMenu(	  "Look Inside",   lookatmenu);
+	glutAddSubMenu(   "Object Menu",   objectmenu);
 	glutAddSubMenu(   "Axes",          axesmenu);
 	glutAddSubMenu(   "Colors",        colormenu);
 	glutAddSubMenu(   "Depth Buffer",  depthbuffermenu);
@@ -973,15 +1015,16 @@ InitLists( )
 
 	SunList = glGenLists(1);
 	glNewList(SunList, GL_COMPILE);
-		SetInfiniteLight(GL_LIGHT0, 5, 5, -5, 1.000, 0.980, 0.804);
+		SetInfiniteLight(GL_LIGHT0, 5, 7, -5, 1.000, 0.980, 0.804);
 		glEnable(GL_LIGHT0);
 	glEndList();
 
 	std::vector<float> objRange;
+
+	//plane list
 	obj1 = glGenLists(1);
 	glNewList(obj1, GL_COMPILE);
-
-		glGenTextures(1, &planetex);
+		/*glGenTextures(1, &planetex);
 		glBindTexture(GL_TEXTURE_2D, planetex);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -993,20 +1036,25 @@ InitLists( )
 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glEnable(GL_TEXTURE_2D);
-		glShadeModel(GL_FLAT);
-		
-		if (objectLoaded == FIGHTER) {
-			objRange = LoadObjFile("F15.obj");
-		}
-		else if (objectLoaded == WOLF) {
-			objRange = LoadObjFile("Wolf.obj");
-		}
-		else {
+		glShadeModel(GL_FLAT);*/
 			objRange = LoadObjFile("A380.obj");
-			objectLoaded = PLANE;
-		}
-		
+			allObjRanges.push_back(objRange);
+	glEndList();
+
+	//fighter list
+	obj2 = glGenLists(1);
+	glNewList(obj2, GL_COMPILE);
+		objRange = LoadObjFile("F15.obj");
 		allObjRanges.push_back(objRange);
+		std::cout << "initializing F15 " << std::endl;
+	glEndList();
+
+	//Wolf list
+	obj3 = glGenLists(1);
+	glNewList(obj3, GL_COMPILE);
+		objRange = LoadObjFile("Wolf.obj");
+		allObjRanges.push_back(objRange);
+		std::cout << "initializing wolf " << std::endl;
 	glEndList();
 }
 
@@ -1644,7 +1692,7 @@ SetInfiniteLight(int ilight, float x, float y, float z, float r, float g, float 
 		glutSolidSphere(0.25, 20, 16);
 	glPopMatrix();
 	glLightfv(ilight, GL_POSITION, InfiniteLightArray(x, y, z));
-	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_AMBIENT, MulArray3(1., White));
 	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
 	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
 	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);

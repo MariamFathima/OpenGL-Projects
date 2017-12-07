@@ -54,7 +54,7 @@
 
 // title of these windows:
 
-const char *WINDOWTITLE = { "OpenGL / GLUT Sample -- Joe Graphics" };
+const char *WINDOWTITLE = { "Final Project -- Aditya Gune" };
 const char *GLUITITLE   = { "User Interface Window" };
 
 
@@ -204,12 +204,13 @@ int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 int		texWidth;
 int		texHeight;
+int		freeze;
 int		level = 0;
 int		ncomps = 3;
 int		border = 0;
 GLuint	SunList;
 GLuint	obj1, obj2, obj3;
-std::vector<std::vector<float>> allObjRanges;
+std::vector<std::vector<float>> allObjRanges = { {1,1,1},{ 1,1,1 },{ 1,1,1 } };
 float yawAngle, pitchAngle, bankAngle;
 GLuint	buildingtex, planetex, fightertex, wolftex, skytex;
 float Time;
@@ -253,6 +254,7 @@ float * MulArray3(float, float[3]);
 float * Array3(float, float, float);
 void	SetMaterial(float, float, float, float);
 void	SetSpotLight(int, float, float, float, float, float, float, float, float, float);
+void	SetNavLight(int ilight, float x, float y, float z, float xdir, float ydir, float zdir, float r, float g, float b);
 void	SetPointLight(int, float, float, float, float, float, float);
 void	SetInfiniteLight(int ilight, float x, float y, float z, float r, float g, float b);
 std::vector<float> LoadObjFile(char * name);
@@ -423,7 +425,7 @@ Display( )
 	// set the eye position, look-at position, and up-vector:
 	if (eyeView == 1) {
 		Reset();
-		gluLookAt(0., 6., -1. - Time,
+		gluLookAt(0., 6., -1.5 - Time,
 			0.+yawAngle, 0-pitchAngle, -10.,
 			0., 1., 0.);
 	}
@@ -477,7 +479,7 @@ Display( )
 
 	// draw the current object:
 
-	glEnable(GL_LIGHTING);
+	
 	glCallList(WorldList);
 	glCallList(SunList);
 	
@@ -485,21 +487,35 @@ Display( )
 		glRotatef(-yawAngle, 0, 1, 0);
 		glTranslatef(0, MAXHEIGHT, 0-Time);
 		glRotatef(0 - pitchAngle, 1, 0, 0);
-		glScalef( (1 / allObjRanges[objectLoaded][0]), (1 / allObjRanges[objectLoaded][1]), (1 / allObjRanges[objectLoaded][2]) );
-		//glBindTexture(GL_TEXTURE_2D, planetex);
+		glDisable(GL_LIGHTING);
+		//port light (red)
+		SetPointLight(GL_LIGHT2, -.45, 0, .4,
+		//			1, 0, 0, 
+					.7, 0., 0.);
 
-		glPushMatrix();
+		//starboard light (green)
+		SetPointLight(GL_LIGHT1, .45, 0, .4,
+		//			-1, 0, 0,
+					0., .7, 0.);
+		glEnable(GL_LIGHTING);
+		glScalef( (1 / allObjRanges[objectLoaded][0]), (1 / allObjRanges[objectLoaded][1]), (1 / allObjRanges[objectLoaded][2]) );
+
 		if (objectLoaded == PLANE)
 		{
+			glPushMatrix();
+
+			glScalef(1, 1, .6);
 			glRotatef(-90, 1, 0, 0);
-			glColor4f(.8, .1, .1, 1.);
+			SetMaterial(.1, .1, .1, 50);
 			glCallList(obj1);
+			glPopMatrix();
 		}
-		glPopMatrix();
+		
 		glPushMatrix();
 		if (objectLoaded == FIGHTER)
 		{
-			glColor4f(.1, .8, .1, 1.);
+			glScalef(1.5, .6, 2);
+			//glColor4f(.1, .8, .1, 1.);
 			glCallList(obj2);
 		}
 		glPopMatrix();
@@ -508,7 +524,7 @@ Display( )
 		{
 			glScalef(1, 1, 3);
 			glRotatef(180, 0, 1, 0);
-			glColor4f(.2, .2, .6, 1.);
+			//glColor4f(.2, .2, .6, 1.);
 			glCallList(obj3);
 		}
 		
@@ -1015,8 +1031,11 @@ InitLists( )
 
 	SunList = glGenLists(1);
 	glNewList(SunList, GL_COMPILE);
-		SetInfiniteLight(GL_LIGHT0, 5, 7, -5, 1.000, 0.980, 0.804);
-		glEnable(GL_LIGHT0);
+		SetInfiniteLight(GL_LIGHT0, -5, 1 * MAXHEIGHT, 5, .800, .800, .800);
+		SetInfiniteLight(GL_LIGHT3, 5, 1*MAXHEIGHT, -5, .800, .800, .800);
+		SetInfiniteLight(GL_LIGHT4, -5, 1 * MAXHEIGHT, -5, .800, .800, .800);
+		SetInfiniteLight(GL_LIGHT5, 5, 1 * MAXHEIGHT, 5, .800, .800, .800);
+		//glEnable(GL_LIGHT0);
 	glEndList();
 
 	std::vector<float> objRange;
@@ -1038,14 +1057,14 @@ InitLists( )
 		glEnable(GL_TEXTURE_2D);
 		glShadeModel(GL_FLAT);*/
 			objRange = LoadObjFile("A380.obj");
-			allObjRanges.push_back(objRange);
+			allObjRanges[0] = objRange;
 	glEndList();
 
 	//fighter list
 	obj2 = glGenLists(1);
 	glNewList(obj2, GL_COMPILE);
 		objRange = LoadObjFile("F15.obj");
-		allObjRanges.push_back(objRange);
+		allObjRanges[1] = objRange;
 		std::cout << "initializing F15 " << std::endl;
 	glEndList();
 
@@ -1053,7 +1072,7 @@ InitLists( )
 	obj3 = glGenLists(1);
 	glNewList(obj3, GL_COMPILE);
 		objRange = LoadObjFile("Wolf.obj");
-		allObjRanges.push_back(objRange);
+		allObjRanges[2] = objRange;
 		std::cout << "initializing wolf " << std::endl;
 	glEndList();
 }
@@ -1087,6 +1106,10 @@ Keyboard( unsigned char c, int x, int y )
 		
 		case 'r':
 			DoLookAtMenu(!eyeView);
+			break;
+		case 'f':
+			freeze < 1 ? glutIdleFunc(NULL) : glutIdleFunc(Animate);
+			freeze = !freeze;
 			break;
 
 		case 'd':
@@ -1648,7 +1671,7 @@ InfiniteLightArray(float a, float b, float c)
 	array[0] = a;
 	array[1] = b;
 	array[2] = c;
-	array[3] = 0.;
+	array[3] = .8;
 	return array;
 }
 void
@@ -1671,10 +1694,10 @@ SetPointLight(int ilight, float x, float y, float z, float r, float g, float b)
 	glPushMatrix();
 		glTranslatef(x, y, z);
 		glColor3f(r,g,b);
-		glutSolidSphere(0.25, 20, 16);
+		glutSolidSphere(0.009, 20, 16);
 	glPopMatrix();
 	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
-	glLightfv(ilight, GL_AMBIENT, Array3(0., 0., 0.));
+	glLightfv(ilight, GL_AMBIENT, Array3(r, g, b));
 	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
 	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
 	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
@@ -1687,18 +1710,17 @@ void
 SetInfiniteLight(int ilight, float x, float y, float z, float r, float g, float b)
 {
 	glPushMatrix();
-		glTranslatef(x, y, z);
-		glColor3f(r, g, b);
-		glutSolidSphere(0.25, 20, 16);
+	glTranslatef(x, y, z);
+	glColor3f(r, g, b);
+	glutSolidSphere(0.009, 20, 16);
 	glPopMatrix();
-	glLightfv(ilight, GL_POSITION, InfiniteLightArray(x, y, z));
+	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
 	glLightfv(ilight, GL_AMBIENT, MulArray3(1., White));
 	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
 	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
 	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
 	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
 	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
-	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_LIGHTING);
 	glEnable(ilight);
 }
@@ -1709,7 +1731,7 @@ SetSpotLight(int ilight, float x, float y, float z, float xdir, float ydir, floa
 	glPushMatrix();
 		glTranslatef(x, y, z);
 		glColor3f(r, g, b);
-		glutSolidSphere(0.25, 20, 16);
+		glutSolidSphere(0.05, 20, 16);
 	glPopMatrix();
 	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
 	glLightfv(ilight, GL_SPOT_DIRECTION, Array3(xdir, ydir, zdir));
@@ -1721,6 +1743,28 @@ SetSpotLight(int ilight, float x, float y, float z, float xdir, float ydir, floa
 	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
 	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
 	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
-	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHTING);
+	glEnable(ilight);
+}
+
+void
+SetNavLight(int ilight, float x, float y, float z, float xdir, float ydir, float zdir, float r, float g, float b)
+{
+	glPushMatrix();
+	glTranslatef(x, y, z);
+	glColor3f(r, g, b);
+	glutSolidSphere(0.015, 20, 16);
+	glPopMatrix();
+	glLightfv(ilight, GL_POSITION, Array3(x, y, z));
+	glLightfv(ilight, GL_SPOT_DIRECTION, Array3(xdir, ydir, zdir));
+	glLightf(ilight, GL_SPOT_EXPONENT, 45);
+	glLightf(ilight, GL_SPOT_CUTOFF, 45.);
+	glLightfv(ilight, GL_AMBIENT, Array3(r/2, g/2, b/2));
+	glLightfv(ilight, GL_DIFFUSE, Array3(r, g, b));
+	glLightfv(ilight, GL_SPECULAR, Array3(r, g, b));
+	glLightf(ilight, GL_CONSTANT_ATTENUATION, 1.);
+	glLightf(ilight, GL_LINEAR_ATTENUATION, 0.);
+	glLightf(ilight, GL_QUADRATIC_ATTENUATION, 0.);
+	//glEnable(GL_LIGHTING);
 	glEnable(ilight);
 }
